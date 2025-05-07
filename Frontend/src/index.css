@@ -2,7 +2,7 @@
   --primary-color: #4361ee;
   --secondary-color: #3f37c9;
   --success-color: #4cc9f0;
-  --text-color: #333;
+  --text-color: #555; /* for light mode */
   --light-gray: #f8f9fa;
 }
 
@@ -17,15 +17,15 @@ body {
 .dark {
   --primary-color: #bb86fc;
   --secondary-color: #3700b3;
-  --text-color: #ffffff;
+  --text-color: #c9d1d9; /* softened light gray text for dark mode */
   --light-gray: #121212;
   background-color: #121212;
-  color: #ffffff;
+  color: var(--text-color);
 }
 
 body.dark {
   background-color: #121212;
-  color: #ffffff;
+  color: var(--text-color);
 }
 
 .form-control {
