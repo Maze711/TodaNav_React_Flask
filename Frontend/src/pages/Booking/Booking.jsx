@@ -8,7 +8,7 @@ import {
   MDBInput,
 } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
-import bgImage from "../../assets/img/login-background.png";
+import bgImage from "../../assets/img/LandingBanner.png";
 
 export const BookingApp = () => {
   return (

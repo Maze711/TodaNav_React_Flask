@@ -8,7 +8,7 @@ import {
   MDBListGroupItem,
   MDBBadge,
 } from "mdb-react-ui-kit";
-import bgImage from "../../assets/img/login-background.png";
+import bgImage from "../../assets/img/LandingBanner.png";
 import userIcon from "../../assets/ico/user.png";
 
 export const BookingDetail = () => {

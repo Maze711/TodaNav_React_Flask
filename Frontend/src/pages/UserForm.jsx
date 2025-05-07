@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MDBContainer, MDBRow, MDBCol } from "mdb-react-ui-kit";
-import bgImage from "../assets/img/login-background.png";
+import bgImage from "../assets/img/LandingBanner.png";
 import { SignIn } from "../Components/SignIn";
 import { SignUp } from "../Components/SignUp";
 import { Toaster } from "react-hot-toast";
