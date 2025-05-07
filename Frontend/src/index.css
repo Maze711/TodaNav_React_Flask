@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-family: "Inter", "Segoe UI", sans-serif;
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -52,7 +52,6 @@ body {
   border-color: var(--primary-color);
 }
 
-/* Add to App.css */
 .toggle-container {
   position: relative;
   height: 56px;
@@ -83,22 +82,18 @@ body {
 }
 
 @media (max-width: 576px) {
-  /* Adjust form width on very small screens */
   .MDBCol[md="6"] {
     padding: 1rem !important;
   }
-  
-  /* Make buttons slightly smaller on mobile */
+
   .toggle-container {
     height: 48px;
   }
-  
-  /* Adjust form input sizes */
+
   .MDBInput {
     padding: 0.75rem !important;
   }
-  
-  /* Adjust submit button */
+
   button[type="submit"] {
     padding: 0.75rem !important;
     font-size: 1rem !important;
@@ -106,69 +101,96 @@ body {
 }
 
 @media (max-width: 768px) {
-  /* Ensure image doesn’t break layout */
   .position-relative img {
-    height: auto !important; /* Allow natural scaling */
-    max-height: 40vh; /* Limit height if needed */
+    height: auto !important;
+    max-height: 40vh;
   }
 
-  /* Improve form centering */
   .d-flex.min-vh-100 {
     align-items: center;
     justify-content: center;
   }
 
-  /* Make form inputs full-width */
   .form-control {
     width: 100%;
   }
 }
 
-/* BottomNav styles */
 .bottom-nav {
-  height: 100px; /* Increase navbar height */
+  height: 100px;
   background-color: var(--light-gray);
   border-top: 1px solid #ddd;
 }
 
 .nav-icon {
-  width: 40px; /* Larger icon size */
+  width: 40px;
   height: 40px;
 }
 
 .nav-text {
-  font-size: 16px; /* Larger text size */
+  font-size: 16px;
   margin-top: 6px;
   color: var(--text-color);
 }
 
-/* Responsive styles for BottomNav */
 @media (max-width: 768px) {
   .bottom-nav {
-    height: 80px; /* Slightly smaller navbar for mobile */
+    height: 80px;
   }
 
   .nav-icon {
-    width: 32px; /* Smaller icon size for mobile */
+    width: 32px;
     height: 32px;
   }
 
   .nav-text {
-    font-size: 14px; /* Smaller text size for mobile */
+    font-size: 14px;
   }
 }
 
 @media (max-width: 576px) {
   .bottom-nav {
-    height: 70px; /* Further reduce navbar height for very small screens */
+    height: 70px;
   }
 
   .nav-icon {
-    width: 28px; /* Further reduce icon size */
+    width: 28px;
     height: 28px;
   }
 
   .nav-text {
-    font-size: 12px; /* Further reduce text size */
+    font-size: 12px;
   }
+}
+
+.filter-btn {
+  white-space: nowrap !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 0.5rem 1rem;
+}
+
+.system-btn:hover,
+.system-btn:focus {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+.system-btn.active {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+.toda-nav-btn:hover,
+.toda-nav-btn:focus {
+  background-color: #28a745 !important;
+  color: #fff !important;
+}
+
+.toda-nav-btn.active {
+  background-color: #28a745 !important;
+  color: #fff !important;
+}
+
+.me-5 {
+  margin-right: 2rem !important;
 }
