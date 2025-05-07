@@ -1,114 +1,90 @@
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { MDBInput } from "mdb-react-ui-kit";
+import toast from "react-hot-toast";
 
 export const SignIn = ({ setIsSignUp }) => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
-    });
-  };
-
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
+    // Check empty fields
+    if (Object.values(input).some(value => value === "")) {
+      toast.error("Please fill up all fields!");
       return;
     }
 
-    if (!validateEmail(formData.email)) {
-      toast.error('Invalid email format');
-      return;
-    }
-
-    setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast.success('Login successful!');
+      // Replace with actual authentication API call
+      const data = await authenticateUser(input);
+      console.log("Logged in user data:", data);
+      toast.success("Login successful!");
     } catch (error) {
-      toast.error('Login failed');
-    } finally {
-      setIsLoading(false);
+      toast.dismiss();
+      toast.error(error.response?.data?.error || "Invalid email or password");
     }
   };
 
+  // Mock authentication function - replace with real API call
+  const authenticateUser = async (credentials) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (credentials.email === "user@example.com" && credentials.password === "password123") {
+          resolve({ user: { id: 1, name: "Test User", email: credentials.email } });
+        } else {
+          reject(new Error("Invalid credentials"));
+        }
+      }, 1000);
+    });
+  };
+
   return (
-    <div className="w-100">
-      <h3 className="mb-3 fw-bold text-center">LOGIN</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label fw-medium">Alumni ID</label>
-          <input
-            type="email"
-            className="form-control p-2"
-            id="email"
-            name="email"
-            placeholder="Enter your Alumni ID"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label fw-medium">Password</label>
-          <input
-            type="password"
-            className="form-control p-2"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="d-flex justify-content-between mb-4">
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="rememberMe"
-              name="rememberMe"
-              checked={formData.rememberMe}
-              onChange={handleChange}
-            />
-            <label className="form-check-label" htmlFor="rememberMe">
-              Remember me
-            </label>
-          </div>
-          <a href="#" className="text-decoration-none">Forgot password?</a>
-        </div>
-
-        <button
-          type="submit"
-          className="btn btn-dark w-100 p-2 mb-3"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          ) : (
-            'Log in'
-          )}
-        </button>
+    <form onSubmit={handleSubmit} className="w-100">
+      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+        Email
+      </label>
+      <MDBInput
+        wrapperClass="mb-3 w-100"
+        type="email"
+        style={{ backgroundColor: "#D9D9D9" }}
+        value={input.email}
+        onChange={(e) => setInput({ ...input, email: e.target.value })}
         
-        <div className="text-center">
-          <p className="mb-0">Don't have an account? <a href="#" className="text-decoration-none" onClick={(e) => {e.preventDefault(); setIsSignUp(true);}}>Sign up</a></p>
-        </div>
-      </form>
-    </div>
+      />
+
+      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+        Password
+      </label>
+      <MDBInput
+        wrapperClass="mb-3 w-100"
+        type="password"
+        style={{ backgroundColor: "#D9D9D9" }}
+        value={input.password}
+        onChange={(e) => setInput({ ...input, password: e.target.value })}
+        
+      />
+
+      <button
+        className="rounded my-3 w-100 p-3 text-white fw-bold border-0 fs-5"
+        style={{ backgroundColor: "#B26D18" }}
+        type="submit"
+      >
+        Continue
+      </button>
+
+      <div className="text-center mt-3">
+        <span className="text-muted">Don't have an account? </span>
+        <button
+          className="btn btn-link p-0 text-primary fw-bold"
+          onClick={() => setIsSignUp(true)}
+          type="button"
+        >
+          Sign Up
+        </button>
+      </div>
+    </form>
   );
 };

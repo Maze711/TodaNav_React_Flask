@@ -1,137 +1,39 @@
 import React, { useState } from "react";
-import { MDBContainer, MDBRow, MDBCol, MDBInput } from "mdb-react-ui-kit";
+import { MDBContainer, MDBRow, MDBCol } from "mdb-react-ui-kit";
 import bgImage from "../assets/img/login-background.png";
-import plmunLogo from "../assets/img/Pamantasan_ng_Lungsod_ng_Muntinlupa_logo 2.png";
-
-const SignInForm = ({ setIsSignUp }) => {
-  const [input, setInput] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Signing in with:", input);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="w-100">
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
-        Email
-      </label>
-      <MDBInput
-        wrapperClass="mb-3 w-100"
-        type="email"
-        style={{ backgroundColor: "#D9D9D9" }}
-        value={input.email}
-        onChange={(e) => setInput({ ...input, email: e.target.value })}
-      />
-
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
-        Password
-      </label>
-      <MDBInput
-        wrapperClass="mb-3 w-100"
-        type="password"
-        style={{ backgroundColor: "#D9D9D9" }}
-        value={input.password}
-        onChange={(e) => setInput({ ...input, password: e.target.value })}
-      />
-
-      <button
-        className="rounded my-3 w-100 p-3 text-white fw-bold border-0 fs-5"
-        style={{ backgroundColor: "#B26D18" }}
-        type="submit"
-      >
-        Continue
-      </button>
-
-      <div className="text-center mt-3">
-        <span className="text-muted">Don't have an account? </span>
-        <button
-          className="btn btn-link p-0 text-primary fw-bold"
-          onClick={() => setIsSignUp(true)}
-        >
-          Sign Up
-        </button>
-      </div>
-    </form>
-  );
-};
-
-const SignUpForm = ({ setIsSignUp }) => {
-  const [input, setInput] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Signing up with:", input);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="w-100">
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
-        Name
-      </label>
-      <MDBInput
-        wrapperClass="mb-3 w-100"
-        type="text"
-        style={{ backgroundColor: "#D9D9D9" }}
-        value={input.name}
-        onChange={(e) => setInput({ ...input, name: e.target.value })}
-      />
-
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
-        Email
-      </label>
-      <MDBInput
-        wrapperClass="mb-3 w-100"
-        type="email"
-        style={{ backgroundColor: "#D9D9D9" }}
-        value={input.email}
-        onChange={(e) => setInput({ ...input, email: e.target.value })}
-      />
-
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
-        Password
-      </label>
-      <MDBInput
-        wrapperClass="mb-3 w-100"
-        type="password"
-        style={{ backgroundColor: "#D9D9D9" }}
-        value={input.password}
-        onChange={(e) => setInput({ ...input, password: e.target.value })}
-      />
-
-      <button
-        className="rounded my-3 w-100 p-3 text-white fw-bold border-0 fs-5"
-        style={{ backgroundColor: "#B26D18" }}
-        type="submit"
-      >
-        Sign Up
-      </button>
-
-      <div className="text-center mt-3">
-        <span className="text-muted">Already have an account? </span>
-        <button
-          className="btn btn-link p-0 text-primary fw-bold"
-          onClick={() => setIsSignUp(false)}
-        >
-          Sign In
-        </button>
-      </div>
-    </form>
-  );
-};
+import { SignIn } from "../Components/SignIn";
+import { SignUp } from "../Components/SignUp";
+import { Toaster } from "react-hot-toast";
 
 export const UserForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
 
   return (
     <MDBContainer fluid className="p-0 vh-100">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+            fontSize: '16px',
+            padding: '16px',
+            borderRadius: '8px',
+            maxWidth: '500px',
+          },
+          error: {
+            style: {
+              background: '#ff4444',
+            },
+          },
+          success: {
+            style: {
+              background: '#00C851',
+            },
+          },
+        }}
+      />
       <MDBRow className="g-0 h-100">
         {/* Left Side */}
         <MDBCol
@@ -147,11 +49,11 @@ export const UserForm = () => {
               Welcome!
             </h2>
 
-            {/* Toggle Buttons with background container */}
+            {/* Toggle Buttons */}
             <div
               className="d-flex p-1 rounded-pill mb-5"
               style={{
-                backgroundColor: "#B9B5B0", // updated color
+                backgroundColor: "#B9B5B0",
                 width: "100%", 
               }}
             >
@@ -165,6 +67,7 @@ export const UserForm = () => {
                   border: "none",
                 }}
                 onClick={() => setIsSignUp(false)}
+                type="button"
               >
                 Sign In
               </button>
@@ -178,6 +81,7 @@ export const UserForm = () => {
                   border: "none",
                 }}
                 onClick={() => setIsSignUp(true)}
+                type="button"
               >
                 SIGN UP
               </button>
@@ -185,9 +89,9 @@ export const UserForm = () => {
 
             <div className="mt-4">
               {!isSignUp ? (
-                <SignInForm setIsSignUp={setIsSignUp} />
+                <SignIn setIsSignUp={setIsSignUp} />
               ) : (
-                <SignUpForm setIsSignUp={setIsSignUp} />
+                <SignUp setIsSignUp={setIsSignUp} />
               )}
             </div>
           </div>
