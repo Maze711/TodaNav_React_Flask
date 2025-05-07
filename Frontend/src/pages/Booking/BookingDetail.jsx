@@ -262,8 +262,15 @@ export const BookingDetail = () => {
             <h3 className="fw-bold text-center" style={{ color: textColor }}>
               Trip Details
             </h3>
-            <hr style={{ border: "2px solid", borderColor: mainBorder }} />
-            <div className="d-flex align-items-center mb-3">
+            <hr style={{ border: "2px solid", borderColor: "black" }} />
+            <div
+              className="d-flex align-items-center mb-3"
+              style={{
+                border: `2px solid ${mainBorder}`,
+                borderRadius: "12px",
+                padding: "1rem",
+              }}
+            >
               <div
                 style={{
                   width: "54px",
@@ -296,12 +303,15 @@ export const BookingDetail = () => {
                 </p>
               </div>
               <div className="text-end">
-                <span style={{ color: textColor, fontWeight: "bold" }}>Estimated fare: </span>
+                <span style={{ color: textColor, fontWeight: "bold" }}>
+                  Estimated fare:{" "}
+                </span>
                 <span className="fw-bold" style={{ color: textColor }}>
                   {fare ? `₱${fare}` : "—"}
                 </span>
               </div>
             </div>
+
             <button
               className="btn btn-success w-100"
               style={{ backgroundColor: mainBorder, border: "none" }}
