@@ -123,3 +123,52 @@ body {
     width: 100%;
   }
 }
+
+/* BottomNav styles */
+.bottom-nav {
+  height: 100px; /* Increase navbar height */
+  background-color: var(--light-gray);
+  border-top: 1px solid #ddd;
+}
+
+.nav-icon {
+  width: 40px; /* Larger icon size */
+  height: 40px;
+}
+
+.nav-text {
+  font-size: 16px; /* Larger text size */
+  margin-top: 6px;
+  color: var(--text-color);
+}
+
+/* Responsive styles for BottomNav */
+@media (max-width: 768px) {
+  .bottom-nav {
+    height: 80px; /* Slightly smaller navbar for mobile */
+  }
+
+  .nav-icon {
+    width: 32px; /* Smaller icon size for mobile */
+    height: 32px;
+  }
+
+  .nav-text {
+    font-size: 14px; /* Smaller text size for mobile */
+  }
+}
+
+@media (max-width: 576px) {
+  .bottom-nav {
+    height: 70px; /* Further reduce navbar height for very small screens */
+  }
+
+  .nav-icon {
+    width: 28px; /* Further reduce icon size */
+    height: 28px;
+  }
+
+  .nav-text {
+    font-size: 12px; /* Further reduce text size */
+  }
+}
