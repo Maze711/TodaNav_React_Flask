@@ -7,6 +7,7 @@ import "./App.css";
 import { UserForm } from "./pages/UserForm";
 import { Notif } from "./pages/Notification/Notif";
 import { BookingApp } from "./pages/Booking/Booking";
+import { BookingDetail } from "./pages/Booking/BookingDetail";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/" element={<UserForm />} />
         <Route path="/Notif" element={<Notif />} />
         <Route path="/Booking" element={<BookingApp />} />
+        <Route path="/BookingDetail" element={<BookingDetail />} />
       </Routes>
     </Router>
   );
