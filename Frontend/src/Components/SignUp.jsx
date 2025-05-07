@@ -33,7 +33,10 @@ export const SignUp = ({ setIsSignUp }) => {
       setIsSignUp(false); // Switch to login after successful registration
     } catch (error) {
       toast.dismiss();
-      toast.error(error.response?.data?.error || "Something went wrong, please check your connection and try again");
+      toast.error(
+        error.response?.data?.error ||
+          "Something went wrong, please check your connection and try again"
+      );
     }
   };
 
@@ -48,52 +51,48 @@ export const SignUp = ({ setIsSignUp }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-100">
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
         Full Name
       </label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="text"
-        style={{ backgroundColor: "#D9D9D9" }}
+        style={{ backgroundColor: "var(--light-gray)" }}
         value={input.name}
         onChange={(e) => setInput({ ...input, name: e.target.value })}
-        
       />
 
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
         Email
       </label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="email"
-        style={{ backgroundColor: "#D9D9D9" }}
+        style={{ backgroundColor: "var(--light-gray)" }}
         value={input.email}
         onChange={(e) => setInput({ ...input, email: e.target.value })}
-        
       />
 
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
         Password
       </label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="password"
-        style={{ backgroundColor: "#D9D9D9" }}
+        style={{ backgroundColor: "var(--light-gray)" }}
         value={input.password}
         onChange={(e) => setInput({ ...input, password: e.target.value })}
-        
       />
 
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
         Confirm Password
       </label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="password"
-        style={{ backgroundColor: "#D9D9D9" }}
+        style={{ backgroundColor: "var(--light-gray)" }}
         value={input.confirmPass}
         onChange={(e) => setInput({ ...input, confirmPass: e.target.value })}
-        
       />
 
       <button

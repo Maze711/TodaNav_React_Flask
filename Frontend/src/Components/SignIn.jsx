@@ -10,15 +10,11 @@ export const SignIn = ({ setIsSignUp }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Check empty fields
-    if (Object.values(input).some(value => value === "")) {
+    if (Object.values(input).some((value) => value === "")) {
       toast.error("Please fill up all fields!");
       return;
     }
-
     try {
-      // Replace with actual authentication API call
       const data = await authenticateUser(input);
       console.log("Logged in user data:", data);
       toast.success("Login successful!");
@@ -28,11 +24,13 @@ export const SignIn = ({ setIsSignUp }) => {
     }
   };
 
-  // Mock authentication function - replace with real API call
   const authenticateUser = async (credentials) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (credentials.email === "user@example.com" && credentials.password === "password123") {
+        if (
+          credentials.email === "user@example.com" &&
+          credentials.password === "password123"
+        ) {
           resolve({ user: { id: 1, name: "Test User", email: credentials.email } });
         } else {
           reject(new Error("Invalid credentials"));
@@ -43,28 +41,26 @@ export const SignIn = ({ setIsSignUp }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-100">
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
         Email
       </label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="email"
-        style={{ backgroundColor: "#D9D9D9" }}
+        style={{ backgroundColor: "var(--light-gray)" }}
         value={input.email}
         onChange={(e) => setInput({ ...input, email: e.target.value })}
-        
       />
 
-      <label className="mb-1 fw-bold" style={{ color: "#214703" }}>
+      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
         Password
       </label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="password"
-        style={{ backgroundColor: "#D9D9D9" }}
+        style={{ backgroundColor: "var(--light-gray)" }}
         value={input.password}
         onChange={(e) => setInput({ ...input, password: e.target.value })}
-        
       />
 
       <button
