@@ -52,22 +52,21 @@ body {
   border-color: var(--primary-color);
 }
 
-/* Make forms responsive on mobile screens */
 @media (max-width: 768px) {
-  .d-flex.min-vh-100 {
-    flex-direction: column;
-  }
-  
-  .w-50 {
-    width: 100% !important;
-  }
-  
-  .min-vh-100 {
-    min-height: auto;
-  }
-  
-  /* Make the image height reasonable on mobile */
+  /* Ensure image doesn’t break layout */
   .position-relative img {
-    height: 300px !important;
+    height: auto !important; /* Allow natural scaling */
+    max-height: 40vh; /* Limit height if needed */
+  }
+
+  /* Improve form centering */
+  .d-flex.min-vh-100 {
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Make form inputs full-width */
+  .form-control {
+    width: 100%;
   }
 }
