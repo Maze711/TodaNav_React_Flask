@@ -9,8 +9,12 @@ import {
 } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
 import bgImage from "../../assets/img/LandingBanner.png";
+import { useTheme } from "../../ThemeContext";
 
 export const BookingApp = () => {
+  const { isDark } = useTheme();
+  const textStyle = { color: isDark ? "#fff" : "inherit" };
+
   return (
     <>
       <MDBContainer fluid className="p-0">
@@ -61,17 +65,21 @@ export const BookingApp = () => {
 
         <div className="mt-5 pt-3">
           <div className="px-4 py-3">
-            <h3 className="fw-bold mb-3">Recently Visited</h3>
+            <h3 className="fw-bold mb-3" style={textStyle}>
+              Recently Visited
+            </h3>
             <hr />
             <div className="p-3 border rounded mb-3">
-              <strong>Sogo Jr. Hotel Bayanan</strong>
-              <p className="mb-0 small text-muted">
+              <strong style={textStyle}>Sogo Jr. Hotel Bayanan</strong>
+              <p className="mb-0 small" style={textStyle}>
                 32, Montillano Street cor National Rd, Bayanan, Muntinlupa City
               </p>
             </div>
             <div className="p-3 border rounded mb-3">
-              <strong>SMercado Drugstore and Billiards</strong>
-              <p className="mb-0 small text-muted">
+              <strong style={textStyle}>
+                SMercado Drugstore and Billiards
+              </strong>
+              <p className="mb-0 small" style={textStyle}>
                 69, Mercado Family Street cor National Rd, Bayanan, Muntinlupa
                 City
               </p>
@@ -79,27 +87,29 @@ export const BookingApp = () => {
           </div>
 
           <div className="px-4 py-3">
-            <h3 className="fw-bold mb-3">RIDE TO SAVED PLACES</h3>
+            <h3 className="fw-bold mb-3" style={textStyle}>
+              RIDE TO SAVED PLACES
+            </h3>
             <hr />
             <div className="d-flex justify-content-start gap-3 flex-wrap">
               <MDBBtn
                 color="light"
-                className="text-dark shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
-                style={{ width: "80px", height: "80px" }}
+                className="shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
+                style={{ width: "80px", height: "80px" }} // removed dynamic color styling
               >
                 <span className="small">Home</span>
               </MDBBtn>
               <MDBBtn
                 color="light"
-                className="text-dark shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
-                style={{ width: "80px", height: "80px" }}
+                className="shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
+                style={{ width: "80px", height: "80px" }} // removed dynamic color styling
               >
                 <span className="small">Work</span>
               </MDBBtn>
               <MDBBtn
                 color="light"
-                className="text-dark shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
-                style={{ width: "80px", height: "80px" }}
+                className="shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
+                style={{ width: "80px", height: "80px" }} // removed dynamic color styling
               >
                 <span className="small">New</span>
               </MDBBtn>
