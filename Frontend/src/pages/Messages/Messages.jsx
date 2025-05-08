@@ -1,19 +1,19 @@
 import { MDBCol, MDBContainer, MDBInput, MDBRow } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
-import userIcon from "../../assets/ico/user.png";
+import riderProfile from "../../assets/img/RiderProfile.jpg";
 import { useState } from "react";
 
 export const Messages = () => {
 const [messages, setMessages] = useState([
-    { id: 1, name: "Kurt Dominic Pansib", message_content: "Ser san na pu kayu d2 na ko sa pick up point", time: "1:05 pm", },
-    { id: 2, name: "Bob Smith", message_content: "Can you confirm the meeting time?", time: "11:30 am", },
-    { id: 3, name: "Charlie Brown", message_content: "Thanks for the update!", time: "10:15 am", },
-    { id: 4, name: "Diana Prince", message_content: "Looking forward to our call later.", time: "9:00 am", },
-    { id: 5, name: "Ethan Hunt", message_content: "Mission accomplished. Awaiting further instructions.", time: "8:45 am", },
-    { id: 6, name: "Fiona Gallagher", message_content: "Can you send me the files by EOD?", time: "8:30 am", },
-    { id: 7, name: "George Clooney", message_content: "Let's catch up soon!", time: "8:15 am", },
-    { id: 8, name: "Hannah Montana", message_content: "Don't forget about the party tonight.", time: "8:00 am", },
-    { id: 9, name: "Ian Somerhalder", message_content: "Thanks for your help earlier.", time: "7:45 am", },
+    { id: 1, name: "Kurt Dominic Pansib", rider_img: riderProfile, message_content: "Ser san na pu kayu d2 na ko sa pick up point", time: "1:05 pm", },
+    { id: 2, name: "Bob Smith", rider_img: riderProfile, message_content: "Can you confirm the meeting time?", time: "11:30 am", },
+    { id: 3, name: "Charlie Brown", rider_img: riderProfile, message_content: "Thanks for the update!", time: "10:15 am", },
+    { id: 4, name: "Diana Prince", rider_img: riderProfile, message_content: "Looking forward to our call later.", time: "9:00 am", },
+    { id: 5, name: "Ethan Hunt", rider_img: riderProfile, message_content: "Mission accomplished. Awaiting further instructions.", time: "8:45 am", },
+    { id: 6, name: "Fiona Gallagher", rider_img: riderProfile, message_content: "Can you send me the files by EOD?", time: "8:30 am", },
+    { id: 7, name: "George Clooney", rider_img: riderProfile, message_content: "Let's catch up soon!", time: "8:15 am", },
+    { id: 8, name: "Hannah Montana", rider_img: riderProfile, message_content: "Don't forget about the party tonight.", time: "8:00 am", },
+    { id: 9, name: "Ian Somerhalder", rider_img: riderProfile, message_content: "Thanks for your help earlier.", time: "7:45 am", },
 ]);
 
 const [search, setSearch] = useState("");
@@ -40,11 +40,12 @@ const filteredMessages = messages.filter((message) =>
             <li key={message.id} className="d-flex align-items-center mb-3">
               <div className="me-3">
                 <img
-                  src={userIcon}
+                  src={message.rider_img}
                   alt="Avatar"
                   className="rounded-circle"
                   width="50"
                   height="50"
+                  style={{ objectFit: "cover"}}
                 />
               </div>
               <div className="flex-grow-1">
