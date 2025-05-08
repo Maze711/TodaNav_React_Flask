@@ -36,7 +36,7 @@ export const BottomNav = () => {
       <MDBContainer fluid>
         <MDBNavbarNav className="d-flex flex-row justify-content-around w-100 align-items-center">
           <li className="nav-item text-center">
-            <Link to="/" className="nav-link">
+            <Link to="/home" className="nav-link">
               <img src={icons.home} alt="Home" className="nav-icon" />
               <div className="nav-text" style={textStyle}>Home</div>
             </Link>
