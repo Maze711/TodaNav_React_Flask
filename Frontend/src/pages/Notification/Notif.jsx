@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn } from "mdb-react-ui-kit";
+import {
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBInput,
+} from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
 import userIcon from "../../assets/ico/user.png";
 
@@ -8,10 +13,30 @@ export const Notif = () => {
   const [filter, setFilter] = useState("all");
 
   const notifications = [
-    { id: 1, sender: "System", message: "Your trip has been completed successfully. You ...", time: "1:15 pm" },
-    { id: 2, sender: "System", message: "Your driver will arrive shortly.", time: "1:05 pm" },
-    { id: 3, sender: "Toda Nav News", message: "ROAD ACCIDENT. A trailer truck loaded with soft ...", time: "8:00 am" },
-    { id: 4, sender: "Toda Nav News", message: "ROAD ACCIDENT. A trailer truck loaded with soft ...", time: "7:38 am" },
+    {
+      id: 1,
+      sender: "System",
+      message: "Your trip has been completed successfully. You ...",
+      time: "1:15 pm",
+    },
+    {
+      id: 2,
+      sender: "System",
+      message: "Your driver will arrive shortly.",
+      time: "1:05 pm",
+    },
+    {
+      id: 3,
+      sender: "Toda Nav News",
+      message: "ROAD ACCIDENT. A trailer truck loaded with soft ...",
+      time: "8:00 am",
+    },
+    {
+      id: 4,
+      sender: "Toda Nav News",
+      message: "ROAD ACCIDENT. A trailer truck loaded with soft ...",
+      time: "7:38 am",
+    },
   ];
 
   const filteredNotifications = notifications.filter((notif) => {
@@ -29,7 +54,10 @@ export const Notif = () => {
         <MDBCol md="6">
           <h1 className="display-5">Notifications</h1>
         </MDBCol>
-        <MDBCol md="6" className="d-flex justify-content-end align-items-center">
+        <MDBCol
+          md="6"
+          className="d-flex justify-content-end align-items-center"
+        >
           <MDBInput
             type="text"
             value={searchTerm}
@@ -38,30 +66,55 @@ export const Notif = () => {
             className="me-5"
           />
           <div className="d-flex gap-2">
-            <MDBBtn
-              color={filter === "all" ? "primary" : "light"}
-              size="lg"
+            <button
+              type="button"
+              style={{
+                backgroundColor: filter === "all" ? "#0d6efd" : "#f8f9fa",
+                color: filter === "all" ? "#fff" : "#000",
+                border: "1px solid #ced4da",
+                borderRadius: "0.25rem",
+                padding: "0.5rem 1rem",
+                fontSize: "1.25rem",
+                cursor: "pointer",
+              }}
               onClick={() => setFilter("all")}
               className="filter-btn"
             >
               All
-            </MDBBtn>
-            <MDBBtn
-              color={filter === "System" ? "primary" : "light"}
-              size="lg"
+            </button>
+            <button
+              type="button"
+              style={{
+                backgroundColor: filter === "System" ? "#0d6efd" : "#f8f9fa",
+                color: filter === "System" ? "#fff" : "#000",
+                border: "1px solid #ced4da",
+                borderRadius: "0.25rem",
+                padding: "0.5rem 1rem",
+                fontSize: "1.25rem",
+                cursor: "pointer",
+              }}
               onClick={() => setFilter("System")}
               className="filter-btn system-btn"
             >
               System
-            </MDBBtn>
-            <MDBBtn
-              color={filter === "Toda Nav News" ? "primary" : "light"}
-              size="lg"
+            </button>
+            <button
+              type="button"
+              style={{
+                backgroundColor:
+                  filter === "Toda Nav News" ? "#0d6efd" : "#f8f9fa",
+                color: filter === "Toda Nav News" ? "#fff" : "#000",
+                border: "1px solid #ced4da",
+                borderRadius: "0.25rem",
+                padding: "0.5rem 1rem",
+                fontSize: "1.25rem",
+                cursor: "pointer",
+              }}
               onClick={() => setFilter("Toda Nav News")}
               className="filter-btn toda-nav-btn"
             >
               Toda Nav News
-            </MDBBtn>
+            </button>
           </div>
         </MDBCol>
       </MDBRow>
@@ -81,10 +134,13 @@ export const Notif = () => {
                   />
                 </div>
                 <div className="flex-grow-1">
-                  <strong>{notif.sender}</strong>
-                  <p className="mb-0 text-muted">{notif.message}</p>
+                  <strong className="notif-sender">{notif.sender}</strong>
+                  <p className="mb-0 notif-message">{notif.message}</p>
                 </div>
-                <div className="text-end text-muted" style={{ minWidth: "80px" }}>
+                <div
+                  className="text-end notif-time"
+                  style={{ minWidth: "80px" }}
+                >
                   {notif.time}
                 </div>
               </li>
