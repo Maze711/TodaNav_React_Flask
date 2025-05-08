@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   MDBContainer,
   MDBRow,
@@ -10,10 +10,26 @@ import {
 import { BottomNav } from "../../Components/BottomNav";
 import bgImage from "../../assets/img/LandingBanner.png";
 import { useTheme } from "../../ThemeContext";
+import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
+import { useNavigate } from "react-router-dom";
+import { muntinlupaLocations } from "./BookingDetail";
 
 export const BookingApp = () => {
   const { isDark } = useTheme();
   const textStyle = { color: isDark ? "#fff" : "inherit" };
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+
+  const mainBorder = isDark ? "#fff" : "#222";
+  const containerBg = isDark ? "#222" : "#fff";
+  const textColor = isDark ? "#fff" : "#222";
+
+  const handleSearchChange = (e) => setSearchValue(e.target.value);
+
+  const handleSelect = (location) => {
+    setSearchValue(location);
+    navigate(`/BookingDetail?from=${encodeURIComponent(location)}`);
+  };
 
   return (
     <>
@@ -30,7 +46,7 @@ export const BookingApp = () => {
           <div
             className="position-absolute w-100 px-3"
             style={{
-              bottom: "-50px",
+              bottom: "-30px",
               left: "0",
             }}
           >
@@ -42,22 +58,17 @@ export const BookingApp = () => {
                   padding: "0 1rem",
                 }}
               >
-                <MDBInputGroup className="mb-4">
-                  <MDBInput
-                    type="text"
-                    placeholder="WHERE TO?"
-                    size="lg"
-                    className="rounded-pill shadow w-100"
-                    style={{
-                      border: "1px solid #ddd",
-                      padding: "0.75rem 2rem",
-                      fontSize: "16px",
-                      backgroundColor: "#fff",
-                      color: "black",
-                      fontWeight: "bold",
-                    }}
-                  />
-                </MDBInputGroup>
+                <LocationSearchInput
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                  placeholder="WHERE TO?"
+                  locations={muntinlupaLocations}
+                  onSelect={handleSelect}
+                  isDark={isDark}
+                  textColor={textColor}
+                  mainBorder={mainBorder}
+                  containerBg={containerBg}
+                />
               </div>
             </MDBRow>
           </div>
@@ -95,21 +106,21 @@ export const BookingApp = () => {
               <MDBBtn
                 color="light"
                 className="shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
-                style={{ width: "80px", height: "80px" }} // removed dynamic color styling
+                style={{ width: "80px", height: "80px" }}
               >
                 <span className="small">Home</span>
               </MDBBtn>
               <MDBBtn
                 color="light"
                 className="shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
-                style={{ width: "80px", height: "80px" }} // removed dynamic color styling
+                style={{ width: "80px", height: "80px" }}
               >
                 <span className="small">Work</span>
               </MDBBtn>
               <MDBBtn
                 color="light"
                 className="shadow-sm rounded-circle d-flex flex-column align-items-center justify-content-center"
-                style={{ width: "80px", height: "80px" }} // removed dynamic color styling
+                style={{ width: "80px", height: "80px" }}
               >
                 <span className="small">New</span>
               </MDBBtn>
