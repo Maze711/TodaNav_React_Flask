@@ -17,9 +17,31 @@ This is the frontend for the TodaNav project, a React-based web application for 
 - [Vite](https://vitejs.dev/)
 - [MDB React UI Kit](https://mdbootstrap.com/docs/react/)
 - [React Leaflet](https://react-leaflet.js.org/) for maps
+- [Leaflet](https://leafletjs.com/) for map rendering
 - [Bootstrap 5](https://getbootstrap.com/)
 - [React Router](https://reactrouter.com/)
 - [React Hot Toast](https://react-hot-toast.com/) for notifications
+
+## Libraries Used
+
+- **react** — Core UI library
+- **react-dom** — DOM bindings for React
+- **react-router-dom** — Routing and navigation
+- **mdb-react-ui-kit** — Material Design Bootstrap React components
+- **bootstrap** — CSS framework for responsive design
+- **react-leaflet** — Interactive maps
+- **leaflet** — Map rendering engine
+- **axios** — HTTP client for API requests
+- **react-hot-toast** — Toast notifications
+- **classnames** — Utility for conditionally joining classNames
+- **vite** — Fast frontend build tool
+- **@fortawesome/fontawesome-free** — Icon library (if used)
+- **@testing-library/react** — Testing utilities (if used)
+- **@testing-library/jest-dom** — Custom jest matchers (if used)
+- **eslint** — Linting (if used)
+- **prettier** — Code formatting (if used)
+
+> _Check your `package.json` for the full and exact list of dependencies._
 
 ## Getting Started
 
