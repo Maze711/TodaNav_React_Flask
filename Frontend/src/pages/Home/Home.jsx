@@ -91,7 +91,7 @@ export const Home = () => {
           />
         </MDBCol>
         <MDBCol md="3" className="d-flex gap-3">
-          <button className={`btn ${isDark && "bg-white"}`}>
+          <button className={`btn ${isDark && "bg-white"}`} onClick={routeToBooking}>
             <img src={locationIcon} height={50} width={50} />
           </button>
           <button className={`btn ${isDark && "bg-white"}`} onClick={routeToAccount}>
