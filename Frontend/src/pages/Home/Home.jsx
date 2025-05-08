@@ -33,6 +33,10 @@ export const Home = () => {
     navigate(`/BookingDetail?from=${encodeURIComponent(location)}`);
   };
 
+  const routeToAccount = () => {
+    navigate("/Account");
+  }
+
   const news_list = [
     {
       id: 1,
@@ -86,7 +90,7 @@ export const Home = () => {
           <button className={`btn ${isDark && "bg-white"}`}>
             <img src={locationIcon} height={50} width={50} />
           </button>
-          <button className={`btn ${isDark && "bg-white"}`}>
+          <button className={`btn ${isDark && "bg-white"}`} onClick={routeToAccount}>
             <img src={userIcon} height={50} width={50} />
           </button>
         </MDBCol>
