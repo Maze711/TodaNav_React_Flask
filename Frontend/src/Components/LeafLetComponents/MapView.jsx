@@ -1,5 +1,11 @@
-import React from "react";
-import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Polyline,
+  Marker,
+  Popup,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 export const MapView = ({
@@ -9,8 +15,32 @@ export const MapView = ({
   toCoords,
   fromSearch,
   toSearch,
-  isDark
+  isDark,
+  routeProfile = "driving", // You can set this prop to "walking", "cycling", or "driving"
 }) => {
+  const [routeCoords, setRouteCoords] = useState([]);
+
+  useEffect(() => {
+    const fetchRoute = async () => {
+      if (fromCoords && toCoords) {
+        // Use the selected profile for more accurate routing
+        const url = `https://router.project-osrm.org/route/v1/${routeProfile}/${fromCoords[1]},${fromCoords[0]};${toCoords[1]},${toCoords[0]}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.routes && data.routes.length > 0) {
+          setRouteCoords(
+            data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng])
+          );
+        } else {
+          setRouteCoords([]);
+        }
+      } else {
+        setRouteCoords([]);
+      }
+    };
+    fetchRoute();
+  }, [fromCoords, toCoords, routeProfile]);
+
   return (
     <MapContainer
       center={center}
@@ -28,17 +58,25 @@ export const MapView = ({
       />
       {fromCoords && (
         <Marker position={fromCoords}>
-          <Popup>Pickup: {fromSearch}</Popup>
+          <Popup>
+            Pickup: {fromSearch}
+            <br />
+            Lat: {fromCoords[0]}, Lng: {fromCoords[1]}
+          </Popup>
         </Marker>
       )}
       {toCoords && (
         <Marker position={toCoords}>
-          <Popup>Dropoff: {toSearch}</Popup>
+          <Popup>
+            Dropoff: {toSearch}
+            <br />
+            Lat: {toCoords[0]}, Lng: {toCoords[1]}
+          </Popup>
         </Marker>
       )}
-      {fromCoords && toCoords && (
+      {routeCoords.length > 0 && (
         <Polyline
-          positions={[fromCoords, toCoords]}
+          positions={routeCoords}
           color={isDark ? "#ff9900" : "#0066ff"}
           weight={4}
         />

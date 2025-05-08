@@ -23,7 +23,7 @@ const muntinlupaLocations = {
   },
   landmarks: {
     "Alabang Town Center": [14.423477, 121.029795],
-    "Festival Supermall": [14.4157, 121.038902],
+    "Festival Malls": [14.4157, 121.038902],
     "St. Jerome Parish Church": [14.421944, 121.031389],
     "Muntinlupa City Hall": [14.385411, 121.029033],
     "Muntinlupa Sports Complex": [14.383712, 121.02895],
@@ -97,7 +97,7 @@ const muntinlupaLocations = {
 
 export const BookingDetail = () => {
   const { isDark } = useTheme();
-  const containerBg = isDark ? "#121212" : "white";
+  const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
   const profileIcon = isDark ? userIcon : userWhiteIcon;
   const circleBg = isDark ? "#fff" : "transparent";
