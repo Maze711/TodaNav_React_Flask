@@ -24,7 +24,7 @@ body {
   --text-color: #c9d1d9; /* softened light gray text for dark mode */
   --header-color: white;
   --button-text-color: black;
-  --body-bg-color: #121212;
+  --body-bg-color: #202124;
 }
 
 body.dark {
