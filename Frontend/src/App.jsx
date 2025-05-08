@@ -6,6 +6,7 @@ import "./App.css";
 
 import { ThemeProvider, useTheme } from "./ThemeContext";
 import { UserForm } from "./pages/UserForm";
+import { Messages } from "./pages/Messages/Messages";
 import { Notif } from "./pages/Notification/Notif";
 import { BookingApp } from "./pages/Booking/Booking";
 import { BookingDetail } from "./pages/Booking/BookingDetail";
