@@ -15,21 +15,21 @@ export const UserForm = () => {
         toastOptions={{
           duration: 5000,
           style: {
-            background: '#363636',
-            color: '#fff',
-            fontSize: '16px',
-            padding: '16px',
-            borderRadius: '8px',
-            maxWidth: '500px',
+            background: "#363636",
+            color: "#fff",
+            fontSize: "16px",
+            padding: "16px",
+            borderRadius: "8px",
+            maxWidth: "500px",
           },
           error: {
             style: {
-              background: '#ff4444',
+              background: "#ff4444",
             },
           },
           success: {
             style: {
-              background: '#00C851',
+              background: "#00C851",
             },
           },
         }}
@@ -39,22 +39,17 @@ export const UserForm = () => {
         <MDBCol
           md="6"
           className="d-flex flex-column align-items-center justify-content-center p-4 h-100"
-          style={{ backgroundColor: "white" }}
         >
           <div className="w-100" style={{ maxWidth: "450px" }}>
-            <h1 className="text-center mb-4 fw-bold" style={{ color: "black" }}>
-              TODA NAV
-            </h1>
-            <h2 className="text-center mb-5 fw-bold" style={{ color: "black" }}>
-              Welcome!
-            </h2>
+            <h1 className="text-center mb-4 fw-bold">TODA NAV</h1>
+            <h2 className="text-center mb-5 fw-bold">Welcome!</h2>
 
             {/* Toggle Buttons */}
             <div
               className="d-flex p-1 rounded-pill mb-5"
               style={{
                 backgroundColor: "#B9B5B0",
-                width: "100%", 
+                width: "100%",
               }}
             >
               <button

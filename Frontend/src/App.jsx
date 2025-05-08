@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,6 +12,12 @@ import { BookingDetail } from "./pages/Booking/BookingDetail";
 
 const ThemeToggleButton = () => {
   const { isDark, toggleTheme } = useTheme();
+
+  // Dynamically update the body class based on the theme
+  useEffect(() => {
+    document.body.classList.toggle("dark", isDark);
+  }, [isDark]);
+
   return (
     <button
       onClick={toggleTheme}

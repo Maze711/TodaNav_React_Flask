@@ -3,7 +3,9 @@
   --secondary-color: #3f37c9;
   --success-color: #4cc9f0;
   --text-color: #555; /* for light mode */
-  --light-gray: #f8f9fa;
+  --header-color: black;
+  --button-text-color: white;
+  --body-bg-color: white;
 }
 
 body {
@@ -12,20 +14,31 @@ body {
   padding: 0;
   height: 100vh;
   overflow-x: hidden;
+  background-color: var(--body-bg-color);
+  color: var(--text-color);
 }
 
 .dark {
   --primary-color: #bb86fc;
   --secondary-color: #3700b3;
   --text-color: #c9d1d9; /* softened light gray text for dark mode */
-  --light-gray: #121212;
-  background-color: #121212;
-  color: var(--text-color);
+  --header-color: white;
+  --button-text-color: black;
+  --body-bg-color: #121212;
 }
 
 body.dark {
-  background-color: #121212;
+  background-color: var(--body-bg-color);
   color: var(--text-color);
+}
+
+label {
+  color: var(--text-color);
+}
+
+h1,
+h2 {
+  color: var(--header-color);
 }
 
 .form-control {
