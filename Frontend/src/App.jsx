@@ -65,6 +65,7 @@ function App() {
         />
         <Routes>
           <Route path="/" element={<UserForm />} />
+          <Route path="/Messages" element={<Messages />} />
           <Route path="/Notif" element={<Notif />} />
           <Route path="/Booking" element={<BookingApp />} />
           <Route path="/BookingDetail" element={<BookingDetail />} />
