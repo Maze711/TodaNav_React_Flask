@@ -13,6 +13,7 @@ import { BookingDetail } from "./pages/Booking/BookingDetail";
 import { BookingComplete } from "./pages/Booking/BookingComplete";
 import { Home } from "./pages/Home/Home";
 import { PaymentMethods } from "./pages/PaymentMethods/PaymentMethods";
+import { Account } from "./pages/Account/Account";
 
 const ThemeToggleButton = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -71,6 +72,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/payments" element={<PaymentMethods />} />
           <Route path="/Messages" element={<Messages />} />
+          <Route path="/Account" element={<Account />} />
           <Route path="/Notif" element={<Notif />} />
           <Route path="/Booking" element={<BookingApp />} />
           <Route path="/BookingDetail" element={<BookingDetail />} />
