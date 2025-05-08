@@ -37,6 +37,10 @@ export const Home = () => {
     navigate("/Account");
   }
 
+  const routeToBooking = () => {
+    navigate("/Booking");
+  }
+
   const news_list = [
     {
       id: 1,
@@ -101,6 +105,7 @@ export const Home = () => {
         type="button"
         className="btn p-3 mb-3"
         style={{ backgroundColor: "#b26d18" }}
+        onClick={routeToBooking}
       >
         <strong>Start Booking Now</strong>
       </button>

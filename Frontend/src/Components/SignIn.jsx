@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { MDBInput } from "mdb-react-ui-kit";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const SignIn = ({ setIsSignUp }) => {
+  const navigate = useNavigate();
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -18,6 +20,7 @@ export const SignIn = ({ setIsSignUp }) => {
       const data = await authenticateUser(input);
       console.log("Logged in user data:", data);
       toast.success("Login successful!");
+      navigate('/home'); // Routes to home page
     } catch (error) {
       toast.dismiss();
       toast.error(error.response?.data?.error || "Invalid email or password");
