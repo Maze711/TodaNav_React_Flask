@@ -1,7 +1,8 @@
 import React from "react";
 import { useTheme } from "../../ThemeContext";
-import { MapView } from "../../Components/LeafLetComponents/MapView";
+import { MapContainer, TileLayer } from "react-leaflet";
 import riderProfile from "../../assets/img/RiderProfile.jpg";
+import "leaflet/dist/leaflet.css";
 
 const MAP_CENTER = [14.4167, 121.0333];
 
@@ -13,7 +14,7 @@ export const BookingComplete = () => {
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
-      {/* Map */}
+      {/* Non-interactive Map */}
       <div
         style={{
           position: "fixed",
@@ -24,7 +25,25 @@ export const BookingComplete = () => {
           zIndex: 0,
         }}
       >
-        <MapView center={MAP_CENTER} isDark={isDark} />
+        <MapContainer
+          center={MAP_CENTER}
+          zoom={16}
+          style={{ width: "100vw", height: "100vh", pointerEvents: "none", filter: isDark ? "grayscale(0.2) brightness(0.7)" : "none" }}
+          dragging={false}
+          zoomControl={false}
+          scrollWheelZoom={false}
+          doubleClickZoom={false}
+          attributionControl={false}
+          keyboard={false}
+        >
+          <TileLayer
+            url={
+              isDark
+                ? "https://tiles.stadiamaps.com/tiles/alidade_dark/{z}/{x}/{y}{r}.png"
+                : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            }
+          />
+        </MapContainer>
       </div>
 
       {/* Modal Trip Details */}
