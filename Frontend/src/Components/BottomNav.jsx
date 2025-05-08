@@ -48,8 +48,8 @@ export const BottomNav = () => {
             </Link>
           </li>
           <li className="nav-item text-center">
-            <Link to="/locate" className="nav-link">
-              <img src={icons.locate} alt="Locate" className="nav-icon" />
+            <Link to="/Booking" className="nav-link">
+              <img src={icons.locate} alt="Booking" className="nav-icon" />
               <div className="nav-text" style={textStyle}>Locate</div>
             </Link>
           </li>

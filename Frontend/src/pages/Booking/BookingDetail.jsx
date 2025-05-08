@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; 
 import { MDBContainer, MDBRow, MDBCol } from "mdb-react-ui-kit";
 import { useTheme } from "../../ThemeContext";
 import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
@@ -8,7 +9,7 @@ import userWhiteIcon from "../../assets/ico/user-white.png";
 import arrowDownIcon from "../../assets/ico/down-arrow.png";
 import arrowUpIcon from "../../assets/ico/up-arrows.png";
 
-const muntinlupaLocations = {
+export const muntinlupaLocations = {
   barangays: {
     Alabang: [14.418364, 121.0385],
     "Ayala Alabang": [14.406064, 121.022355],
@@ -97,13 +98,21 @@ const muntinlupaLocations = {
 
 export const BookingDetail = () => {
   const { isDark } = useTheme();
+  const location = useLocation(); // <-- For query params
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
   const profileIcon = isDark ? userIcon : userWhiteIcon;
   const circleBg = isDark ? "#fff" : "transparent";
   const mainBorder = "#B26D18";
 
-  const [fromSearch, setFromSearch] = useState("");
+  // Helper to get query params
+  const getQueryParam = (param) => {
+    const params = new URLSearchParams(location.search);
+    return params.get(param) || "";
+  };
+
+  // Set initial value from query param
+  const [fromSearch, setFromSearch] = useState(getQueryParam("from"));
   const [toSearch, setToSearch] = useState("");
   const [mapCenter, setMapCenter] = useState([14.4167, 121.0333]);
   const [fromCoords, setFromCoords] = useState(null);
@@ -112,6 +121,24 @@ export const BookingDetail = () => {
   const [fare, setFare] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
+
+  // If fromSearch is set from query param, set fromCoords/mapCenter
+  useEffect(() => {
+    if (fromSearch) {
+      let coordinates = null;
+      for (const category of Object.values(muntinlupaLocations)) {
+        if (category[fromSearch]) {
+          coordinates = category[fromSearch];
+          break;
+        }
+      }
+      if (coordinates) {
+        setFromCoords(coordinates);
+        setMapCenter(coordinates);
+      }
+    }
+    // eslint-disable-next-line
+  }, [fromSearch]);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;

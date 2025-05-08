@@ -1,13 +1,37 @@
-import { MDBCol, MDBContainer, MDBInput, MDBRow } from "mdb-react-ui-kit";
+import { MDBCol, MDBContainer, MDBRow } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
 import locationIcon from "../../assets/ico/location.png";
 import userIcon from "../../assets/ico/user.png";
 import News1 from "../../assets/img/News1.jpg";
 import News2 from "../../assets/img/BgforBooking.jpg";
 import { useTheme } from "../../ThemeContext";
+import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { muntinlupaLocations } from "../Booking/BookingDetail";
 
 export const Home = () => {
-  const { isDark } = useTheme()
+  const { isDark } = useTheme();
+  const navigate = useNavigate();
+
+  // State for search input and selected location
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  // Use real locations
+  const locations = muntinlupaLocations;
+
+  const mainBorder = isDark ? "#fff" : "#222";
+  const containerBg = isDark ? "#222" : "#fff";
+  const textColor = isDark ? "#fff" : "#222";
+
+  const handleSearchChange = (e) => setSearchValue(e.target.value);
+
+  const handleSelect = (location) => {
+    setSelectedLocation(location);
+    setSearchValue(location);
+    navigate(`/BookingDetail?from=${encodeURIComponent(location)}`);
+  };
 
   const news_list = [
     {
@@ -48,7 +72,15 @@ export const Home = () => {
           <h1>TODA NAV</h1>
         </MDBCol>
         <MDBCol md="6">
-          <MDBInput type="search" placeholder="Search Places" />
+          <LocationSearchInput
+            value={searchValue}
+            onChange={handleSearchChange}
+            placeholder="Search Places"
+            locations={locations}
+            onSelect={handleSelect}
+            isDark={isDark}
+            textColor={textColor}
+          />
         </MDBCol>
         <MDBCol md="3" className="d-flex gap-3">
           <button className={`btn ${isDark && "bg-white"}`}>
