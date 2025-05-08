@@ -31,7 +31,9 @@ export const SignIn = ({ setIsSignUp }) => {
           credentials.email === "user@example.com" &&
           credentials.password === "password123"
         ) {
-          resolve({ user: { id: 1, name: "Test User", email: credentials.email } });
+          resolve({
+            user: { id: 1, name: "Test User", email: credentials.email },
+          });
         } else {
           reject(new Error("Invalid credentials"));
         }
@@ -41,13 +43,11 @@ export const SignIn = ({ setIsSignUp }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-100">
-      <label className="mb-1 fw-bold" style={{ color: "var(--text-color)" }}>
-        Email
-      </label>
+      <label className="mb-1 fw-bold">Email</label>
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="email"
-        style={{ backgroundColor: "var(--light-gray)" }}
+        style={{ backgroundColor: "white" }}
         value={input.email}
         onChange={(e) => setInput({ ...input, email: e.target.value })}
       />
@@ -58,7 +58,7 @@ export const SignIn = ({ setIsSignUp }) => {
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="password"
-        style={{ backgroundColor: "var(--light-gray)" }}
+        style={{ backgroundColor: "white" }}
         value={input.password}
         onChange={(e) => setInput({ ...input, password: e.target.value })}
       />
@@ -72,9 +72,12 @@ export const SignIn = ({ setIsSignUp }) => {
       </button>
 
       <div className="text-center mt-3">
-        <span className="text-muted">Don't have an account? </span>
+        <span style={{ color: "var(--text-color)" }}>
+          Don't have an account?{" "}
+        </span>
         <button
-          className="btn btn-link p-0 text-primary fw-bold"
+          className="btn btn-link p-0 fw-bold"
+          style={{ color: "var(--primary-color)" }}
           onClick={() => setIsSignUp(true)}
           type="button"
         >

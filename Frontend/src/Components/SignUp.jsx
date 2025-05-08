@@ -7,18 +7,18 @@ export const SignUp = ({ setIsSignUp }) => {
     name: "",
     email: "",
     password: "",
-    confirmPass: ""
+    confirmPass: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+
     // Check if inputs are empty
-    if (Object.values(input).some(value => value === "")) {
+    if (Object.values(input).some((value) => value === "")) {
       toast.error("Please fill up all fields!");
       return;
     }
-    
+
     // Check if passwords match
     if (input.password !== input.confirmPass) {
       toast.error("Passwords do not match!");
@@ -57,7 +57,7 @@ export const SignUp = ({ setIsSignUp }) => {
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="text"
-        style={{ backgroundColor: "var(--light-gray)" }}
+        style={{ backgroundColor: "white" }}
         value={input.name}
         onChange={(e) => setInput({ ...input, name: e.target.value })}
       />
@@ -68,7 +68,7 @@ export const SignUp = ({ setIsSignUp }) => {
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="email"
-        style={{ backgroundColor: "var(--light-gray)" }}
+        style={{ backgroundColor: "white" }}
         value={input.email}
         onChange={(e) => setInput({ ...input, email: e.target.value })}
       />
@@ -79,7 +79,7 @@ export const SignUp = ({ setIsSignUp }) => {
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="password"
-        style={{ backgroundColor: "var(--light-gray)" }}
+        style={{ backgroundColor: "white" }}
         value={input.password}
         onChange={(e) => setInput({ ...input, password: e.target.value })}
       />
@@ -90,7 +90,7 @@ export const SignUp = ({ setIsSignUp }) => {
       <MDBInput
         wrapperClass="mb-3 w-100"
         type="password"
-        style={{ backgroundColor: "var(--light-gray)" }}
+        style={{ backgroundColor: "white" }}
         value={input.confirmPass}
         onChange={(e) => setInput({ ...input, confirmPass: e.target.value })}
       />
@@ -104,9 +104,12 @@ export const SignUp = ({ setIsSignUp }) => {
       </button>
 
       <div className="text-center mt-3">
-        <span className="text-muted">Already have an account? </span>
+        <span style={{ color: "var(--text-color)" }}>
+          Already have an account?{" "}
+        </span>
         <button
-          className="btn btn-link p-0 text-primary fw-bold"
+          className="btn btn-link p-0 fw-bold"
+          style={{ color: "var(--primary-color)" }}
           onClick={() => setIsSignUp(false)}
           type="button"
         >
