@@ -49,77 +49,72 @@ export const Notif = () => {
   );
 
   return (
-    <MDBContainer>
+    <MDBContainer className="overflow-hidden">
       <MDBRow className="align-items-center my-3">
-        <MDBCol md="6">
-          <h1 className="display-5">Notifications</h1>
+        <MDBCol md="4">
+          <h1>Notifications</h1>
         </MDBCol>
-        <MDBCol
-          md="6"
-          className="d-flex justify-content-end align-items-center"
-        >
+        <MDBCol md="6">
           <MDBInput
             type="text"
+            placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            size="lg"
-            className="me-5"
           />
-          <div className="d-flex gap-2">
-            <button
-              type="button"
-              style={{
-                backgroundColor: filter === "all" ? "#0d6efd" : "#f8f9fa",
-                color: filter === "all" ? "#fff" : "#000",
-                border: "1px solid #ced4da",
-                borderRadius: "0.25rem",
-                padding: "0.5rem 1rem",
-                fontSize: "1.25rem",
-                cursor: "pointer",
-              }}
-              onClick={() => setFilter("all")}
-              className="filter-btn"
-            >
-              All
-            </button>
-            <button
-              type="button"
-              style={{
-                backgroundColor: filter === "System" ? "#0d6efd" : "#f8f9fa",
-                color: filter === "System" ? "#fff" : "#000",
-                border: "1px solid #ced4da",
-                borderRadius: "0.25rem",
-                padding: "0.5rem 1rem",
-                fontSize: "1.25rem",
-                cursor: "pointer",
-              }}
-              onClick={() => setFilter("System")}
-              className="filter-btn system-btn"
-            >
-              System
-            </button>
-            <button
-              type="button"
-              style={{
-                backgroundColor:
-                  filter === "Toda Nav News" ? "#0d6efd" : "#f8f9fa",
-                color: filter === "Toda Nav News" ? "#fff" : "#000",
-                border: "1px solid #ced4da",
-                borderRadius: "0.25rem",
-                padding: "0.5rem 1rem",
-                fontSize: "1.25rem",
-                cursor: "pointer",
-              }}
-              onClick={() => setFilter("Toda Nav News")}
-              className="filter-btn toda-nav-btn"
-            >
-              Toda Nav News
-            </button>
-          </div>
         </MDBCol>
       </MDBRow>
+      <div className="d-flex gap-2 mb-3">
+        <button
+          type="button"
+          style={{
+            backgroundColor: filter === "all" ? "#0d6efd" : "#f8f9fa",
+            color: filter === "all" ? "#fff" : "#000",
+            border: "1px solid #ced4da",
+            borderRadius: "0.25rem",
+            padding: "0.5rem 1rem",
+            fontSize: "1.1rem",
+            cursor: "pointer",
+          }}
+          onClick={() => setFilter("all")}
+          className="filter-btn"
+        >
+          All
+        </button>
+        <button
+          type="button"
+          style={{
+            backgroundColor: filter === "System" ? "#0d6efd" : "#f8f9fa",
+            color: filter === "System" ? "#fff" : "#000",
+            border: "1px solid #ced4da",
+            borderRadius: "0.25rem",
+            padding: "0.5rem 1rem",
+            fontSize: "1.1rem",
+            cursor: "pointer",
+          }}
+          onClick={() => setFilter("System")}
+          className="filter-btn system-btn"
+        >
+          System
+        </button>
+        <button
+          type="button"
+          style={{
+            backgroundColor: filter === "Toda Nav News" ? "#0d6efd" : "#f8f9fa",
+            color: filter === "Toda Nav News" ? "#fff" : "#000",
+            border: "1px solid #ced4da",
+            borderRadius: "0.25rem",
+            padding: "0.5rem 1rem",
+            fontSize: "1.1rem",
+            cursor: "pointer",
+          }}
+          onClick={() => setFilter("Toda Nav News")}
+          className="filter-btn toda-nav-btn"
+        >
+          Toda Nav News
+        </button>
+      </div>
       <hr />
-      <MDBRow>
+      <MDBRow style={{ maxHeight: "440px", overflowY: "auto" }}>
         <MDBCol>
           <ul className="list-unstyled">
             {searchedNotifications.map((notif) => (
