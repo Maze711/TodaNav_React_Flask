@@ -1,6 +1,7 @@
 import React from "react";
 import { useTheme } from "../../ThemeContext";
 import { MapContainer, TileLayer } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import riderProfile from "../../assets/img/RiderProfile.jpg";
 import "leaflet/dist/leaflet.css";
 
@@ -8,6 +9,7 @@ const MAP_CENTER = [14.4167, 121.0333];
 
 export const BookingComplete = () => {
   const { isDark } = useTheme();
+  const navigate = useNavigate();
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#c9d1d9" : "#000";
   const mainBorder = "#B26D18";
@@ -134,6 +136,7 @@ export const BookingComplete = () => {
             gap: "2.5rem",
             justifyContent: "center",
             marginTop: "2.2rem",
+            marginBottom: "2rem",
           }}
         >
           <button
@@ -179,6 +182,24 @@ export const BookingComplete = () => {
             </span>
           </button>
         </div>
+        {/* Return Home Button */}
+        <button
+          className="btn"
+          style={{
+            background: "#198754",
+            color: "#fff",
+            fontWeight: "bold",
+            borderRadius: "2rem",
+            padding: "1.1rem 3.2rem",
+            fontSize: "1.25rem",
+            border: "none",
+            marginTop: "0.5rem",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}
+          onClick={() => navigate("/home")}
+        >
+          Return Home
+        </button>
       </div>
     </div>
   );

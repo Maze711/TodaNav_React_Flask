@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; 
+import { useLocation, useNavigate } from "react-router-dom";
 import { MDBContainer, MDBRow, MDBCol } from "mdb-react-ui-kit";
 import { useTheme } from "../../ThemeContext";
 import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
@@ -98,7 +98,8 @@ export const muntinlupaLocations = {
 
 export const BookingDetail = () => {
   const { isDark } = useTheme();
-  const location = useLocation(); // <-- For query params
+  const location = useLocation();
+  const navigate = useNavigate();
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
   const profileIcon = isDark ? userIcon : userWhiteIcon;
@@ -120,6 +121,7 @@ export const BookingDetail = () => {
   const [distance, setDistance] = useState(null);
   const [fare, setFare] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
+  const [rideDone, setRideDone] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
 
   // If fromSearch is set from query param, set fromCoords/mapCenter
@@ -199,9 +201,13 @@ export const BookingDetail = () => {
     }
     setIsBooking(true);
     setTimeout(() => {
-      alert(`Ride booked! Your fare is ₱${fare}`);
       setIsBooking(false);
+      setRideDone(true);
     }, 1500);
+  };
+
+  const handleRideDone = () => {
+    navigate("/BookingComplete");
   };
 
   return (
@@ -376,14 +382,24 @@ export const BookingDetail = () => {
               </div>
             </div>
 
-            <button
-              className="btn btn-success w-100"
-              style={{ backgroundColor: mainBorder, border: "none" }}
-              onClick={handleBookRide}
-              disabled={isBooking}
-            >
-              {isBooking ? "Booking..." : "Book Ride"}
-            </button>
+            {!rideDone ? (
+              <button
+                className="btn btn-success w-100"
+                style={{ backgroundColor: mainBorder, border: "none" }}
+                onClick={handleBookRide}
+                disabled={isBooking}
+              >
+                {isBooking ? "Booking..." : "Book Ride"}
+              </button>
+            ) : (
+              <button
+                className="btn btn-primary w-100"
+                style={{ backgroundColor: "#198754", border: "none" }}
+                onClick={handleRideDone}
+              >
+                Ride Done
+              </button>
+            )}
           </div>
         </div>
       )}
