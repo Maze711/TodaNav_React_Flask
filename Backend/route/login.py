@@ -11,5 +11,13 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password):
-        return jsonify({'message': 'Login successful', 'user': {'id': user.id, 'name': user.name, 'email': user.email}})
+        return jsonify({
+            'message': 'Login successful',
+            'user': {
+                'id': user.id,
+                'name': user.name,
+                'email': user.email,
+                'role': user.role  # Include role in response
+            }
+        })
     return jsonify({'error': 'Invalid email or password'}), 401
