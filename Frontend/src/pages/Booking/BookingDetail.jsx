@@ -160,8 +160,18 @@ export const BookingDetail = () => {
       }));
     });
 
+    // Listen for booking accepted by rider
+    socket.on("booking_accepted", (data) => {
+      setTripDetails((prev) => ({
+        ...prev,
+        rider_name: data.rider_name,
+        user_id: data.user_id,
+      }));
+    });
+
     return () => {
       socket.off("booking_confirmation");
+      socket.off("booking_accepted");
     };
   }, []);
 

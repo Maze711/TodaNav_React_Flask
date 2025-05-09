@@ -100,7 +100,7 @@ export const Notif = () => {
         </button>
       </div>
       <hr />
-      <MDBRow style={{ maxHeight: "440px", overflowY: "auto" }}>
+      <MDBRow style={{ maxHeight: "300px", overflowY: "auto" }}>
         <MDBCol>
           <ul className="list-unstyled">
             {searchedNotifications.map((notif) => (
@@ -124,6 +124,35 @@ export const Notif = () => {
                 >
                   {notif.time}
                 </div>
+                {/* Green accept button */}
+                <button
+                  style={{
+                    backgroundColor: "#28a745",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "40px",
+                    height: "40px",
+                    color: "#fff",
+                    marginLeft: "10px",
+                    fontSize: "1.5rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                  }}
+                  title="Accept Booking"
+                  onClick={() => {
+                    if (socketRef.current && notif.bookingDetails) {
+                      socketRef.current.emit("accept_booking", {
+                        booking_id: notif.bookingDetails.booking_id,
+                        rider_name: user?.name,
+                        user_id: user?.user_id,
+                      });
+                    }
+                  }}
+                >
+                  ✓
+                </button>
               </li>
             ))}
           </ul>
