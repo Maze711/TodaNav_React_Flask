@@ -72,3 +72,19 @@ def handle_create_booking(data):
         'from_location': from_location,
         'to_location': to_location,
     }, to=request.sid)  # Send only to the user who created the booking
+
+@socketio.on('accept_booking')
+def handle_accept_booking(data):
+    """
+    Rider accepts a booking. Notify the booking creator.
+    """
+    booking_id = data.get('booking_id')
+    rider_name = data.get('rider_name')
+    user_id = data.get('user_id')
+
+    logger.info(f"Booking accepted: {booking_id} by {rider_name} ({user_id})")
+    emit('booking_accepted', {
+        'booking_id': booking_id,
+        'rider_name': rider_name,
+        'user_id': user_id,
+    }, broadcast=True)
