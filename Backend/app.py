@@ -29,9 +29,11 @@ db.init_app(app)
 # Register blueprints
 from route.register import register_bp
 from route.login import login_bp
+from route.user import user_bp
 
 app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
+app.register_blueprint(user_bp)
 
 if __name__ == '__main__':
     with app.app_context():

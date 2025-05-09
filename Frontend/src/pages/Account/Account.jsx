@@ -13,10 +13,25 @@ import globeLight from "../../assets/ico/globe_light.svg";
 import arrowRightLight from "../../assets/ico/arrowright_light_ico.svg";
 
 import { useTheme } from "../../ThemeContext";
+import { useEffect, useState } from "react";
+
+// Example: get userId from localStorage, context, or route params
+// Here, we'll use localStorage as an example
+const getUserId = () => {
+  // Replace this with your actual logic for getting the logged-in user's ID
+  return localStorage.getItem("userId") || 1;
+};
 
 export const Account = () => {
-
   const { isDark } = useTheme();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userId = getUserId();
+    fetch(`http://localhost:5000/api/user/${userId}`)
+      .then(res => res.json())
+      .then(data => setUser(data));
+  }, []);
 
   const icon = {
     edit: isDark ? editLight : editIcon, 
@@ -45,8 +60,8 @@ export const Account = () => {
             style={{ objectFit: "cover" }}
           />
           <div className="d-flex flex-column flex-grow-1 justify-content-center">
-            <h2 className="m-0">Mave Czedrick Mataverde</h2>
-            <p className="m-0">iamczedrickyoungblood@gmail.com</p>
+            <h2 className="m-0">{user ? user.name : "Loading..."}</h2>
+            <p className="m-0">{user ? user.email : ""}</p>
             <p className="m-0">+6399142516969</p>
           </div>
           <button
