@@ -154,7 +154,7 @@ export const BookingDetail = () => {
     socket.on("booking_confirmation", (data) => {
       setTripDetails((prev) => ({
         ...prev,
-        booking_id: booking_id,
+        booking_id: data.booking_id,
         from_location: data.from_location,
         to_location: data.to_location,
       }));
@@ -239,7 +239,7 @@ export const BookingDetail = () => {
 
     socket.emit("create_booking", {
       booking_id: bookingId,
-      user_id: user?.id,
+      user_id: user?.user_id,
       role: user?.role,
       from_location: fromSearch,
       to_location: toSearch,
