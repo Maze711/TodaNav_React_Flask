@@ -1,6 +1,6 @@
 import { MDBContainer, MDBRow, MDBCol, MDBInput } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
-import userProfile from "../../assets/img/RiderProfile.jpg";
+import userImg from "../../assets/img/RiderProfile.jpg";
 
 // Light Mode Icons
 import editIcon from "../../assets/ico/edit_light_ico.svg";
@@ -36,8 +36,8 @@ const getUserId = () => {
 export const Account = () => {
   const { isDark } = useTheme();
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const userContext = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const [userProfile, setUserProfile] = useState(userImg);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -45,18 +45,17 @@ export const Account = () => {
   });
 
   useEffect(() => {
-    const userId = userContext?.user_id || getUserId();
+    const userId = user?.user_id || getUserId();
     if (!userId) return;
     fetch(`http://localhost:5000/api/user/by_userid/${userId}`)
       .then((res) => res.json())
       .then((data) => {
-        setUser(data);
         setEditForm({
           name: data.name || "",
-          contact_no: "+6399142516969" || "",
+          contact_no: data.contact_no || "",
         });
       });
-  }, [userContext]);
+  }, [user]);
 
   const icon = {
     edit: isDark ? editLight : editIcon,
@@ -70,8 +69,9 @@ export const Account = () => {
     setIsEditing(false);
     setEditForm({
       name: user.name || "",
-      contact_no: "+6399142516969" || "",
+      contact_no: user.contact_no || "",
     });
+    setUserProfile(userImg); // Reset the profile image to default
   };
 
   const handleLogout = () => {
@@ -85,6 +85,78 @@ export const Account = () => {
     // Redirect back to login page
     navigate("/");
   };
+
+  const imgToBlob = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        resolve(event.target.result); // Base64 string
+      };    
+      
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      
+      // Convert file (uploaded image) to base64
+      reader.readAsDataURL(file); 
+    });
+
+  const handleProfileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file.");
+      return;
+    }
+
+    imgToBlob(file).then((blob) => {
+      setUserProfile(blob);
+      console.log(blob);
+    })
+    .catch((error) => {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image. Please try again.");
+    })
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    const isSaved = confirm("Are you sure you want to save the changes?");
+
+    if (!isSaved) return;
+
+    const userId = user?.user_id || getUserId();
+    if (!userId) return;
+
+    try {
+      // Update the user profile
+      const response = await fetch(`http://localhost:5000/api/user/update/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: editForm.name,
+          contact_no: editForm.contact_no,
+          profile_img: userProfile,
+        })
+      });
+
+      const data = await response.json();
+      console.log(data);
+      toast.success(data.message);
+      setUser({...user, name: data.name, contact_no: data.contact_no}) // Update user context
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      toast.error("Failed to update profile. Please try again.");
+      return;
+    }
+  }
 
   return (
     <MDBContainer>
@@ -102,7 +174,9 @@ export const Account = () => {
           <div className="position-relative">
             <img
               className="rounded-circle"
-              src={userProfile}
+              src={
+                userProfile.startsWith("data:image/") ? userProfile : userImg
+              }
               width="150"
               height="150"
               style={{ objectFit: "cover", marginLeft: "30px" }}
@@ -125,7 +199,12 @@ export const Account = () => {
                   height="20"
                   style={{ objectFit: "cover" }}
                 />
-                <input type="file" accept="image/*" className="d-none" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="d-none"
+                  onChange={handleProfileChange}
+                />
               </label>
             )}
           </div>
@@ -145,7 +224,7 @@ export const Account = () => {
             )}
             <p className="m-0">{user ? user.email : ""}</p>
             {!isEditing ? (
-              <p className="m-0">+6399142516969</p>
+              <p className="m-0">{user ? user.contact_no || "No contact no.#" : "Loading..."}</p>
             ) : (
               <MDBInput
                 type="tel"
@@ -157,7 +236,7 @@ export const Account = () => {
               />
             )}
             <p className="m-0">
-              <strong>Role:</strong> {userContext?.role || user?.role || "user"}
+              <strong>Role:</strong> {user?.role || "user"}
             </p>
           </div>
 
@@ -194,7 +273,7 @@ export const Account = () => {
                   isDark ? "btn-success" : "btn-success"
                 } rounded-3 p-3 fw-bold`}
                 style={{ width: "80px" }}
-                onClick={() => alert("Saved Successfully")}
+                onClick={handleSave}
               >
                 Save
               </button>
