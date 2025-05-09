@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MDBContainer, MDBRow, MDBCol } from "mdb-react-ui-kit";
 import { useTheme } from "../../ThemeContext";
@@ -8,6 +8,8 @@ import userIcon from "../../assets/ico/user.png";
 import userWhiteIcon from "../../assets/ico/user-white.png";
 import arrowDownIcon from "../../assets/ico/down-arrow.png";
 import arrowUpIcon from "../../assets/ico/up-arrows.png";
+import { io } from "socket.io-client";
+import { UserContext } from "../../App";
 
 export const muntinlupaLocations = {
   barangays: {
@@ -96,10 +98,13 @@ export const muntinlupaLocations = {
   },
 };
 
+const socket = io("http://127.0.0.1:5000"); // Connect to the WebSocket server
+
 export const BookingDetail = () => {
   const { isDark } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext); // Access user details from context
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
   const profileIcon = isDark ? userIcon : userWhiteIcon;
@@ -123,6 +128,7 @@ export const BookingDetail = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [rideDone, setRideDone] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
+  const [tripDetails, setTripDetails] = useState(null); // Store trip details
 
   // If fromSearch is set from query param, set fromCoords/mapCenter
   useEffect(() => {
@@ -141,6 +147,18 @@ export const BookingDetail = () => {
     }
     // eslint-disable-next-line
   }, [fromSearch]);
+
+  // Listen for booking confirmation from the backend
+  useEffect(() => {
+    socket.on("new_booking", (data) => {
+      console.log("Trip details received:", data); // Log the trip details
+      setTripDetails(data); // Store the trip details
+    });
+
+    return () => {
+      socket.off("new_booking");
+    };
+  }, []);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
@@ -199,7 +217,20 @@ export const BookingDetail = () => {
       alert("Please select both pickup and dropoff locations");
       return;
     }
+
     setIsBooking(true);
+
+    // Emit the create_booking event to notify the backend
+    const bookingId = `BOOKING_${Date.now()}`; // Generate a unique booking ID
+    socket.emit("create_booking", {
+      booking_id: bookingId,
+      user_id: user?.user_id, // Include user ID
+      role: user?.role,       // Include user role
+      from_location: fromSearch, // Include 'from' location
+      to_location: toSearch,     // Include 'to' location
+      rider_name: user?.name     // Include rider name
+    });
+
     setTimeout(() => {
       setIsBooking(false);
       setRideDone(true);
@@ -212,6 +243,7 @@ export const BookingDetail = () => {
 
   return (
     <MDBContainer fluid className="p-0 vh-100" style={{ position: "relative" }}>
+      <h1>Welcome, {user?.name || "Guest"}!</h1>
       {/* Map */}
       <div
         style={{
@@ -363,13 +395,16 @@ export const BookingDetail = () => {
               </div>
               <div style={{ flexGrow: 1 }}>
                 <h5 className="fw-bold mb-1" style={{ color: textColor }}>
-                  Kurt Dominic Pansib{" "}
-                  <span style={{ fontWeight: "normal" }}>(09698739067)</span>
+                  {tripDetails?.rider_name || "Rider Name"}{" "}
+                  <span style={{ fontWeight: "normal" }}>
+                    ({tripDetails?.user_id || "Rider ID"})
+                  </span>
                 </h5>
                 <p className="mb-0" style={{ color: textColor }}>
-                  {fromCoords && toCoords
-                    ? `Distance: ${distance} km`
-                    : "Select pickup and dropoff locations"}
+                  Booking ID: {tripDetails?.booking_id || "—"}
+                </p>
+                <p className="mb-0" style={{ color: textColor }}>
+                  From: {tripDetails?.from_location || "—"} To: {tripDetails?.to_location || "—"}
                 </p>
               </div>
               <div className="text-end">
