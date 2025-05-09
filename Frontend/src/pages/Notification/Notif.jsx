@@ -1,24 +1,28 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { MDBContainer, MDBRow, MDBCol, MDBInput } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
 import { io } from "socket.io-client";
 import userIcon from "../../assets/ico/user.png";
 import { UserContext } from "../../App";
 
-const socket = io("http://127.0.0.1:5000", {
-  query: { role: "Rider" }, // Specify the role as "Rider"
-});
-
 export const Notif = () => {
   const { user } = useContext(UserContext); // Access user details from context
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [notifications, setNotifications] = useState([]);
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    if (user?.role === "Rider") {
-      socket.emit("join_room", { room: "riders" }); // Join the riders room
+    if (!user) return;
+
+    // Only create socket if not already created
+    if (!socketRef.current) {
+      socketRef.current = io("http://127.0.0.1:5000", {
+        query: { role: user.role }, // Use actual user role
+      });
     }
+
+    const socket = socketRef.current;
 
     // Listen for new booking notifications
     socket.on("new_booking", (data) => {
@@ -27,7 +31,7 @@ export const Notif = () => {
         sender: "System",
         message: `New booking created! Booking ID: ${data.booking_id}, From: ${data.from_location}, To: ${data.to_location}`,
         time: new Date().toLocaleTimeString(),
-        bookingDetails: data, // Store the booking details
+        bookingDetails: data,
       };
       setNotifications((prev) => [newNotification, ...prev]);
     });

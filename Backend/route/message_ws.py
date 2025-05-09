@@ -22,16 +22,13 @@ connected_users = {}  # Dictionary to track connected users and their roles
 
 @socketio.on('connect')
 def handle_connect():
-    """
-    Handle a new client connection and assign them a role.
-    """
-    role = request.args.get('role')  # Pass role as a query parameter during connection
-    user_id = request.sid  # Unique session ID for the connected client
+    role = request.args.get('role')
+    user_id = request.sid
     connected_users[user_id] = role
-    logger.info(f"User connected: {user_id}, Role: {role}")  # Log connections
+    logger.info(f"User connected: {user_id}, Role: {role}")
 
-    if role == 'Rider':
-        join_room('riders')  # Add the client to the 'riders' room
+    if role and role.lower() == 'rider':  # Case-insensitive check
+        join_room('riders')
         logger.info(f"Rider {user_id} joined room: riders")
 
 @socketio.on('disconnect')
