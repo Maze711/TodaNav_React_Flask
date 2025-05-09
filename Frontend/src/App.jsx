@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, createContext } from "react";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-
 import { ThemeProvider, useTheme } from "./ThemeContext";
 import { UserForm } from "./pages/UserForm";
 import { Messages } from "./pages/Messages/Messages";
@@ -14,15 +13,15 @@ import { BookingComplete } from "./pages/Booking/BookingComplete";
 import { Home } from "./pages/Home/Home";
 import { PaymentMethods } from "./pages/PaymentMethods/PaymentMethods";
 import { Account } from "./pages/Account/Account";
+import { API_BASE_URL } from "./config/config";
+
+export const ApiUrlContext = createContext(API_BASE_URL);
 
 const ThemeToggleButton = () => {
   const { isDark, toggleTheme } = useTheme();
-
-  // Dynamically update the body class based on the theme
   useEffect(() => {
     document.body.classList.toggle("dark", isDark);
   }, [isDark]);
-
   return (
     <button
       onClick={toggleTheme}
@@ -44,41 +43,43 @@ const ThemeToggleButton = () => {
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <ThemeToggleButton />
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            duration: 2000,
-            style: {
-              background: "#333",
-              color: "#fff",
-            },
-            success: {
+      <ApiUrlContext.Provider value={API_BASE_URL}>
+        <Router>
+          <ThemeToggleButton />
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 2000,
               style: {
-                background: "#198754",
+                background: "#333",
+                color: "#fff",
               },
-            },
-            error: {
-              style: {
-                background: "#dc3545",
+              success: {
+                style: {
+                  background: "#198754",
+                },
               },
-            },
-          }}
-          reverseOrder={false}
-        />
-        <Routes>
-          <Route path="/" element={<UserForm />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/payments" element={<PaymentMethods />} />
-          <Route path="/Messages" element={<Messages />} />
-          <Route path="/Account" element={<Account />} />
-          <Route path="/Notif" element={<Notif />} />
-          <Route path="/Booking" element={<BookingApp />} />
-          <Route path="/BookingDetail" element={<BookingDetail />} />
-          <Route path="/BookingComplete" element={<BookingComplete />} />
-        </Routes>
-      </Router>
+              error: {
+                style: {
+                  background: "#dc3545",
+                },
+              },
+            }}
+            reverseOrder={false}
+          />
+          <Routes>
+            <Route path="/" element={<UserForm />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/payments" element={<PaymentMethods />} />
+            <Route path="/Messages" element={<Messages />} />
+            <Route path="/Account" element={<Account />} />
+            <Route path="/Notif" element={<Notif />} />
+            <Route path="/Booking" element={<BookingApp />} />
+            <Route path="/BookingDetail" element={<BookingDetail />} />
+            <Route path="/BookingComplete" element={<BookingComplete />} />
+          </Routes>
+        </Router>
+      </ApiUrlContext.Provider>
     </ThemeProvider>
   );
 }
