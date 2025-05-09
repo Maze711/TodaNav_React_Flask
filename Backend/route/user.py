@@ -11,6 +11,6 @@ def get_user(user_id):
     return jsonify({
         'id': user.id,
         'name': user.name,
-        'email': user.email
-        # Add more fields if needed
+        'email': user.email,
+        'role': user.role 
     })
