@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.models import db 
+from config.socketio_config import socketio
+from route.message_ws import message_ws_bp
 
 try:
     from config.config import config
@@ -38,4 +40,5 @@ app.register_blueprint(user_bp)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    socketio.init_app(app)
+    socketio.run(app, host="127.0.0.1", port=5000)
