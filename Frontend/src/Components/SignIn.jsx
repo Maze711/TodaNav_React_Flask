@@ -2,11 +2,12 @@ import React, { useState, useContext } from "react";
 import { MDBInput } from "mdb-react-ui-kit";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { ApiUrlContext } from "../App";
+import { ApiUrlContext, UserContext } from "../App";
 
 export const SignIn = ({ setIsSignUp }) => {
   const navigate = useNavigate();
   const apiUrl = useContext(ApiUrlContext);
+  const { setUser } = useContext(UserContext); // Access setUser from context
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -27,7 +28,10 @@ export const SignIn = ({ setIsSignUp }) => {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Invalid email or password");
-      localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
+
+      // Store user details in context
+      setUser(data.user);
+
       toast.success("Login successful!");
       navigate('/home');
     } catch (error) {

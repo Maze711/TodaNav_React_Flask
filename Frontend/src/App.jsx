@@ -16,7 +16,7 @@ import { Account } from "./pages/Account/Account";
 import { API_BASE_URL } from "./config/config";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
-export const UserContext = createContext(null); // Add this
+export const UserContext = createContext(null);
 
 const ThemeToggleButton = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -48,12 +48,27 @@ function App() {
     return stored ? JSON.parse(stored) : null;
   });
 
-  // Optionally, update user context on login/logout elsewhere in your app
+  useEffect(() => {
+    // Sync user state with localStorage whenever it changes
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      console.log("Logged-in user:", user); // Log the user details
+    } else {
+      console.log("No user is logged in.");
+    }
+  }, [user]);
 
   return (
     <ThemeProvider>
       <ApiUrlContext.Provider value={API_BASE_URL}>
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={{ user, setUser }}>
           <Router>
             <ThemeToggleButton />
             <Toaster

@@ -1,43 +1,41 @@
-import React, { useState } from "react";
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBInput,
-} from "mdb-react-ui-kit";
+import React, { useState, useEffect, useContext } from "react";
+import { MDBContainer, MDBRow, MDBCol, MDBInput } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
+import { io } from "socket.io-client";
 import userIcon from "../../assets/ico/user.png";
+import { UserContext } from "../../App";
+
+const socket = io("http://127.0.0.1:5000", {
+  query: { role: "Rider" }, // Specify the role as "Rider"
+});
 
 export const Notif = () => {
+  const { user } = useContext(UserContext); // Access user details from context
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const [notifications, setNotifications] = useState([]);
 
-  const notifications = [
-    {
-      id: 1,
-      sender: "System",
-      message: "Your trip has been completed successfully. You ...",
-      time: "1:15 pm",
-    },
-    {
-      id: 2,
-      sender: "System",
-      message: "Your driver will arrive shortly.",
-      time: "1:05 pm",
-    },
-    {
-      id: 3,
-      sender: "Toda Nav News",
-      message: "ROAD ACCIDENT. A trailer truck loaded with soft ...",
-      time: "8:00 am",
-    },
-    {
-      id: 4,
-      sender: "Toda Nav News",
-      message: "ROAD ACCIDENT. A trailer truck loaded with soft ...",
-      time: "7:38 am",
-    },
-  ];
+  useEffect(() => {
+    if (user?.role === "Rider") {
+      socket.emit("join_room", { room: "riders" }); // Join the riders room
+    }
+
+    // Listen for new booking notifications
+    socket.on("new_booking", (data) => {
+      const newNotification = {
+        id: Date.now(),
+        sender: "System",
+        message: `New booking created! Booking ID: ${data.booking_id}, From: ${data.from_location}, To: ${data.to_location}`,
+        time: new Date().toLocaleTimeString(),
+        bookingDetails: data, // Store the booking details
+      };
+      setNotifications((prev) => [newNotification, ...prev]);
+    });
+
+    return () => {
+      socket.off("new_booking");
+    };
+  }, [user]);
 
   const filteredNotifications = notifications.filter((notif) => {
     if (filter === "all") return true;
@@ -95,22 +93,6 @@ export const Notif = () => {
           className="filter-btn system-btn"
         >
           System
-        </button>
-        <button
-          type="button"
-          style={{
-            backgroundColor: filter === "Toda Nav News" ? "#0d6efd" : "#f8f9fa",
-            color: filter === "Toda Nav News" ? "#fff" : "#000",
-            border: "1px solid #ced4da",
-            borderRadius: "0.25rem",
-            padding: "0.5rem 1rem",
-            fontSize: "1.1rem",
-            cursor: "pointer",
-          }}
-          onClick={() => setFilter("Toda Nav News")}
-          className="filter-btn toda-nav-btn"
-        >
-          Toda Nav News
         </button>
       </div>
       <hr />
