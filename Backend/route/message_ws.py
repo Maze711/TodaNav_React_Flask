@@ -51,15 +51,15 @@ def handle_message(data):
 @socketio.on('create_booking')
 def handle_create_booking(data):
     """
-    Notify riders about a new booking.
+    Notify riders about a new booking and send confirmation back to the user.
     """
     booking_id = data.get('booking_id')
     user_id = data.get('user_id')
-    from_location = data.get('from_location')  # Get 'from' location
-    to_location = data.get('to_location')      # Get 'to' location
-    rider_name = data.get('rider_name')        # Get rider name (if applicable)
+    from_location = data.get('from_location')
+    to_location = data.get('to_location')
 
-    logger.info(f"Booking created: {booking_id} by User ID: {user_id}")  # Log booking creation
+    # Log the received data
+    logger.info(f"Received create_booking event with data: {data}")
 
     # Notify riders with booking details
     emit('new_booking', {
@@ -67,5 +67,11 @@ def handle_create_booking(data):
         'user_id': user_id,
         'from_location': from_location,
         'to_location': to_location,
-        'rider_name': rider_name
     }, room='riders')
+
+    # Send confirmation back to the user who created the booking
+    emit('booking_confirmation', {
+        'booking_id': booking_id,
+        'from_location': from_location,
+        'to_location': to_location,
+    }, to=request.sid)  # Send only to the user who created the booking

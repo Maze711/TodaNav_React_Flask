@@ -117,7 +117,6 @@ export const BookingDetail = () => {
     return params.get(param) || "";
   };
 
-  // Set initial value from query param
   const [fromSearch, setFromSearch] = useState(getQueryParam("from"));
   const [toSearch, setToSearch] = useState("");
   const [mapCenter, setMapCenter] = useState([14.4167, 121.0333]);
@@ -128,9 +127,8 @@ export const BookingDetail = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [rideDone, setRideDone] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
-  const [tripDetails, setTripDetails] = useState(null); // Store trip details
+  const [tripDetails, setTripDetails] = useState(null);
 
-  // If fromSearch is set from query param, set fromCoords/mapCenter
   useEffect(() => {
     if (fromSearch) {
       let coordinates = null;
@@ -143,20 +141,27 @@ export const BookingDetail = () => {
       if (coordinates) {
         setFromCoords(coordinates);
         setMapCenter(coordinates);
+        setTripDetails((prev) => ({
+          ...prev,
+          from_location: fromSearch,
+        }));
       }
     }
-    // eslint-disable-next-line
   }, [fromSearch]);
 
   // Listen for booking confirmation from the backend
   useEffect(() => {
-    socket.on("new_booking", (data) => {
-      console.log("Trip details received:", data); // Log the trip details
-      setTripDetails(data); // Store the trip details
+    socket.on("booking_confirmation", (data) => {
+      setTripDetails((prev) => ({
+        ...prev,
+        booking_id: booking_id,
+        from_location: data.from_location,
+        to_location: data.to_location,
+      }));
     });
 
     return () => {
-      socket.off("new_booking");
+      socket.off("booking_confirmation");
     };
   }, []);
 
@@ -197,7 +202,7 @@ export const BookingDetail = () => {
     }
   }, [fromCoords, toCoords]);
 
-  const handleLocationSelect = (location, setSearch, setCoords) => {
+  const handleLocationSelect = (location, setSearch, setCoords, field) => {
     let coordinates = null;
     for (const category of Object.values(muntinlupaLocations)) {
       if (category[location]) {
@@ -209,6 +214,10 @@ export const BookingDetail = () => {
       setSearch(location);
       setCoords(coordinates);
       setMapCenter(coordinates);
+      setTripDetails((prev) => ({
+        ...prev,
+        [field]: location,
+      }));
     }
   };
 
@@ -220,15 +229,20 @@ export const BookingDetail = () => {
 
     setIsBooking(true);
 
-    // Emit the create_booking event to notify the backend
-    const bookingId = `BOOKING_${Date.now()}`; // Generate a unique booking ID
+    const bookingId = `BOOKING_${Date.now()}`;
+    setTripDetails((prev) => ({
+      ...prev,
+      booking_id: bookingId,
+      from_location: fromSearch,
+      to_location: toSearch,
+    }));
+
     socket.emit("create_booking", {
       booking_id: bookingId,
-      user_id: user?.user_id, // Include user ID
-      role: user?.role,       // Include user role
-      from_location: fromSearch, // Include 'from' location
-      to_location: toSearch,     // Include 'to' location
-      rider_name: user?.name     // Include rider name
+      user_id: user?.id,
+      role: user?.role,
+      from_location: fromSearch,
+      to_location: toSearch,
     });
 
     setTimeout(() => {
@@ -290,7 +304,7 @@ export const BookingDetail = () => {
               placeholder="From (e.g., Bayanan)"
               locations={muntinlupaLocations}
               onSelect={(location) =>
-                handleLocationSelect(location, setFromSearch, setFromCoords)
+                handleLocationSelect(location, setFromSearch, setFromCoords, "from_location")
               }
               isDark={isDark}
               textColor={textColor}
@@ -308,7 +322,7 @@ export const BookingDetail = () => {
               placeholder="To (e.g., Alabang)"
               locations={muntinlupaLocations}
               onSelect={(location) =>
-                handleLocationSelect(location, setToSearch, setToCoords)
+                handleLocationSelect(location, setToSearch, setToCoords, "to_location")
               }
               isDark={isDark}
               textColor={textColor}
@@ -404,7 +418,7 @@ export const BookingDetail = () => {
                   Booking ID: {tripDetails?.booking_id || "—"}
                 </p>
                 <p className="mb-0" style={{ color: textColor }}>
-                  From: {tripDetails?.from_location || "—"} To: {tripDetails?.to_location || "—"}
+                  From: {tripDetails?.from_location || fromSearch || "—"} To: {tripDetails?.to_location || toSearch || "—"}
                 </p>
               </div>
               <div className="text-end">
