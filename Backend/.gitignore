@@ -7,10 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Virtual environments
 venv
+.env
+*.env.local
+*.env.development
+*.env.production
+*.env.test
+
+# Build outputs
 dist
 dist-ssr
+build
 *.local
+
+# Dependency directories
+node_modules/
+bower_components/
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +35,34 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Python specific
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+*.pytest_cache/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Flask specific
+instance/
+*.sqlite3
+
+# React specific
+*.cache
+*.next
+.next/
+out/
+coverage/
+
+# Miscellaneous
+*.bak
+*.tmp
+*.log
+*.lock
+*.pid
+*.seed
+*.pid.lock

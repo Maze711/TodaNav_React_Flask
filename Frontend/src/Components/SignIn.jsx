@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { MDBInput } from "mdb-react-ui-kit";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { ApiUrlContext } from "../App";
 
 export const SignIn = ({ setIsSignUp }) => {
   const navigate = useNavigate();
+  const apiUrl = useContext(ApiUrlContext);
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -17,31 +19,21 @@ export const SignIn = ({ setIsSignUp }) => {
       return;
     }
     try {
-      const data = await authenticateUser(input);
-      console.log("Logged in user data:", data);
+      const response = await fetch(`${apiUrl}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(input),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Invalid email or password");
+      localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
       toast.success("Login successful!");
-      navigate('/home'); // Routes to home page
+      navigate('/home');
     } catch (error) {
       toast.dismiss();
-      toast.error(error.response?.data?.error || "Invalid email or password");
+      toast.error(error.message || "Invalid email or password");
     }
-  };
-
-  const authenticateUser = async (credentials) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (
-          credentials.email === "user@example.com" &&
-          credentials.password === "password123"
-        ) {
-          resolve({
-            user: { id: 1, name: "Test User", email: credentials.email },
-          });
-        } else {
-          reject(new Error("Invalid credentials"));
-        }
-      }, 1000);
-    });
   };
 
   return (
