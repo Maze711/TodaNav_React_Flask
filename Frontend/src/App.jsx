@@ -59,7 +59,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      console.log("Logged-in user:", user); // Log the user details
+      console.log("Logged-in user:", user);
     } else {
       console.log("No user is logged in.");
     }
