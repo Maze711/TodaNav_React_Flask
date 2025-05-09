@@ -16,11 +16,17 @@ import { useTheme } from "../../ThemeContext";
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../../App";
 
-// Example: get userId from localStorage, context, or route params
-// Here, we'll use localStorage as an example
 const getUserId = () => {
-  // Replace this with your actual logic for getting the logged-in user's ID
-  return localStorage.getItem("userId") || 1;
+  const user = localStorage.getItem("user");
+  if (user) {
+    try {
+      const parsed = JSON.parse(user);
+      return parsed.user_id || parsed.id;
+    } catch {
+      return null;
+    }
+  }
+  return null;
 };
 
 export const Account = () => {
@@ -29,11 +35,12 @@ export const Account = () => {
   const userContext = useContext(UserContext);
 
   useEffect(() => {
-    const userId = getUserId();
+    const userId = userContext?.user_id || userContext?.id || getUserId();
+    if (!userId) return;
     fetch(`http://localhost:5000/api/user/${userId}`)
       .then(res => res.json())
       .then(data => setUser(data));
-  }, []);
+  }, [userContext]);
 
   const icon = {
     edit: isDark ? editLight : editIcon, 
