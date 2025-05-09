@@ -15,6 +15,7 @@ def login():
             'message': 'Login successful',
             'user': {
                 'id': user.id,
+                'user_id': user.user_id,
                 'name': user.name,
                 'email': user.email,
                 'role': user.role  # Include role in response

@@ -25,7 +25,7 @@ const getUserId = () => {
   if (user) {
     try {
       const parsed = JSON.parse(user);
-      return parsed.user_id || parsed.id;
+      return parsed.user_id;
     } catch {
       return null;
     }
@@ -45,9 +45,9 @@ export const Account = () => {
   });
 
   useEffect(() => {
-    const userId = userContext?.user_id || userContext?.id || getUserId();
+    const userId = userContext?.user_id || getUserId();
     if (!userId) return;
-    fetch(`http://localhost:5000/api/user/${userId}`)
+    fetch(`http://localhost:5000/api/user/by_userid/${userId}`)
       .then((res) => res.json())
       .then((data) => {
         setUser(data);
@@ -79,12 +79,12 @@ export const Account = () => {
     if (!isLoggedOut) return;
 
     // Clears any user-related data
-    localStorage.removeItem("user") // Remove the user from localStorage
+    localStorage.removeItem("user"); // Remove the user from localStorage
     toast.success("Logged out successfully!");
 
     // Redirect back to login page
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   return (
     <MDBContainer>
