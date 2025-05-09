@@ -13,7 +13,8 @@ import globeLight from "../../assets/ico/globe_light.svg";
 import arrowRightLight from "../../assets/ico/arrowright_light_ico.svg";
 
 import { useTheme } from "../../ThemeContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from "../../App";
 
 // Example: get userId from localStorage, context, or route params
 // Here, we'll use localStorage as an example
@@ -25,6 +26,7 @@ const getUserId = () => {
 export const Account = () => {
   const { isDark } = useTheme();
   const [user, setUser] = useState(null);
+  const userContext = useContext(UserContext);
 
   useEffect(() => {
     const userId = getUserId();
@@ -63,6 +65,9 @@ export const Account = () => {
             <h2 className="m-0">{user ? user.name : "Loading..."}</h2>
             <p className="m-0">{user ? user.email : ""}</p>
             <p className="m-0">+6399142516969</p>
+            <p className="m-0">
+              <strong>Role:</strong> {userContext?.role || user?.role || "user"}
+            </p>
           </div>
           <button
             className={`btn ${isDark? "btn-light" : "btn-dark"} rounded-circle p-0`}
