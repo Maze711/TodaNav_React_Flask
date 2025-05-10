@@ -503,8 +503,10 @@ export const BookingDetail = () => {
         >
           <ToggleChat
             userName={chatProps.userName}
+            userRole={user?.role}
             autoOpen={true}
             floating={false}
+            bookingId={tripDetails?.booking_id}
           />
         </div>
       )}

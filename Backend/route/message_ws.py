@@ -88,3 +88,17 @@ def handle_accept_booking(data):
         'rider_name': rider_name,
         'user_id': user_id,
     }, broadcast=True)
+
+@socketio.on('ride_done')
+def handle_ride_done(data):
+    """
+    Rider marks ride as done. Notify the booking creator.
+    """
+    booking_id = data.get('booking_id')
+    user_id = data.get('user_id')
+
+    logger.info(f"Ride done for booking: {booking_id} by user: {user_id}")
+    emit('ride_done', {
+        'booking_id': booking_id,
+        'user_id': user_id,
+    }, broadcast=True)

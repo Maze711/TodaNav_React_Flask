@@ -1,17 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../App";
 
 export const ToggleChat = ({
   userName = "User",
+  userRole = "",
   autoOpen = false,
   style = {},
-  floating = true
+  floating = true,
+  bookingId = null,
 }) => {
+  const { user } = useContext(UserContext);
   const [open, setOpen] = useState(autoOpen);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(null);
+  const [rideDone, setRideDone] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newSocket = io("http://127.0.0.1:5000");
@@ -37,6 +44,13 @@ export const ToggleChat = ({
       };
       socket.emit("message", msg);
       setInput("");
+    }
+  };
+
+  const handleRideDone = () => {
+    setRideDone(true);
+    if (socket && bookingId) {
+      socket.emit("ride_done", { booking_id: bookingId, user_id: user?.user_id });
     }
   };
 
@@ -180,7 +194,9 @@ export const ToggleChat = ({
           background: "#f8f9fa",
           borderBottomLeftRadius: 20,
           borderBottomRightRadius: 20,
-          padding: "10px 16px"
+          padding: "10px 16px",
+          flexDirection: "column",
+          gap: "8px"
         }}>
           <input
             type="text"
@@ -195,7 +211,7 @@ export const ToggleChat = ({
               padding: "8px 14px",
               fontSize: 15,
               outline: "none",
-              marginRight: 8,
+              marginBottom: 8,
               background: "#fff"
             }}
           />
@@ -215,6 +231,24 @@ export const ToggleChat = ({
           >
             Send
           </button>
+          {userRole?.toLowerCase() === "rider" && !rideDone && bookingId && (
+            <button
+              onClick={handleRideDone}
+              style={{
+                padding: "8px 22px",
+                borderRadius: 20,
+                border: "none",
+                background: "#198754",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: 15,
+                cursor: "pointer",
+                transition: "background 0.2s"
+              }}
+            >
+              Ride Done
+            </button>
+          )}
         </div>
       </div>
     </div>
