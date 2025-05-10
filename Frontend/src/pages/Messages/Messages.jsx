@@ -3,11 +3,16 @@ import { BottomNav } from "../../Components/BottomNav";
 import { useState, useEffect, useContext } from "react";
 import { ToggleChat } from "../../Components/ToggleChat";
 import { UserContext } from "../../App";
+import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 
 export const Messages = () => {
   const { user } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [search, setSearch] = useState("");
+  const [bookingId, setBookingId] = useState(null);
+  const [showChat, setShowChat] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:5000/api/messages?user_id=" + user?.user_id)
@@ -32,6 +37,30 @@ export const Messages = () => {
   const filteredMessages = messages.filter((message) =>
     message.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  useEffect(() => {
+    if (!user) return;
+    const socket = io("http://127.0.0.1:5000", { query: { role: user.role } });
+
+    socket.on("booking_accepted", (data) => {
+      if (data.user_id === user.user_id) {
+        setBookingId(data.booking_id);
+        setShowChat(true);
+      }
+    });
+
+    socket.on("ride_done", (data) => {
+      if (data.user_id === user.user_id) {
+        navigate("/BookingComplete");
+      }
+    });
+
+    return () => {
+      socket.off("booking_accepted");
+      socket.off("ride_done");
+      socket.disconnect();
+    };
+  }, [user, navigate]);
 
   return (
     <>
@@ -76,7 +105,12 @@ export const Messages = () => {
           </ul>
         </MDBRow>
         <div>
-          <ToggleChat userName={user?.name || "User"} />
+          <ToggleChat
+            userName={user?.name || "User"}
+            userRole={user?.role || ""}
+            bookingId={bookingId}
+            autoOpen={showChat}
+          />
         </div>
         <BottomNav />
       </MDBContainer>
