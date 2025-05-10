@@ -1,7 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { MDBNavbar, MDBContainer, MDBNavbarNav } from "mdb-react-ui-kit";
 import { useTheme } from "../ThemeContext";
+import { NotificationContext } from "../contexts/NotificationContext";
 
 // Black icons
 import homeIcon from "../assets/ico/home.png";
@@ -19,7 +20,14 @@ import notificationIconWhite from "../assets/ico/notification-white.png";
 
 export const BottomNav = () => {
   const { isDark } = useTheme();
-  
+  const { unread, clearUnread } = React.useContext(NotificationContext);
+  const location = useLocation();
+
+  React.useEffect(() => {
+    // Clear unread badge when visiting /Notif
+    if (location.pathname === "/Notif") clearUnread();
+  }, [location, clearUnread]);
+
   const icons = {
     home: isDark ? homeIconWhite : homeIcon,
     wallet: isDark ? walletIconWhite : walletIcon,
@@ -59,10 +67,30 @@ export const BottomNav = () => {
               <div className="nav-text" style={textStyle}>Messages</div>
             </Link>
           </li>
-          <li className="nav-item text-center">
+          <li className="nav-item text-center" style={{ position: "relative" }}>
             <Link to="/Notif" className="nav-link">
               <img src={icons.notification} alt="Notification" className="nav-icon" />
               <div className="nav-text" style={textStyle}>Notification</div>
+              {unread && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 10,
+                    background: "red",
+                    color: "white",
+                    borderRadius: "50%",
+                    width: 18,
+                    height: 18,
+                    fontSize: 12,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  !
+                </span>
+              )}
             </Link>
           </li>
         </MDBNavbarNav>
