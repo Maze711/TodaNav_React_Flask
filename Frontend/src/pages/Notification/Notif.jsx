@@ -4,13 +4,14 @@ import { BottomNav } from "../../Components/BottomNav";
 import { io } from "socket.io-client";
 import userIcon from "../../assets/ico/user.png";
 import { UserContext } from "../../App";
+import { NotificationContext } from "../../contexts/NotificationContext";
 import { useNavigate } from "react-router-dom";
 
 export const Notif = () => {
   const { user } = useContext(UserContext); // Access user details from context
+  const { notifications } = useContext(NotificationContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const [notifications, setNotifications] = useState([]);
   const socketRef = useRef(null);
   const navigate = useNavigate();
 
@@ -35,7 +36,7 @@ export const Notif = () => {
         time: new Date().toLocaleTimeString(),
         bookingDetails: data,
       };
-      setNotifications((prev) => [newNotification, ...prev]);
+      // Removed local state update, notifications are now managed by context
     });
 
     return () => {
