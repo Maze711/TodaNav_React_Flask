@@ -4,6 +4,7 @@ import { BottomNav } from "../../Components/BottomNav";
 import { io } from "socket.io-client";
 import userIcon from "../../assets/ico/user.png";
 import { UserContext } from "../../App";
+import { useNavigate } from "react-router-dom";
 
 export const Notif = () => {
   const { user } = useContext(UserContext); // Access user details from context
@@ -11,6 +12,7 @@ export const Notif = () => {
   const [filter, setFilter] = useState("all");
   const [notifications, setNotifications] = useState([]);
   const socketRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) return;
@@ -148,6 +150,7 @@ export const Notif = () => {
                         rider_name: user?.name,
                         user_id: user?.user_id,
                       });
+                      navigate("/Messages"); // Redirect to Messages after accepting
                     }
                   }}
                 >

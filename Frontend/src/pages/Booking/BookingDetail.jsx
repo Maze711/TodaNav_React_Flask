@@ -10,6 +10,7 @@ import arrowDownIcon from "../../assets/ico/down-arrow.png";
 import arrowUpIcon from "../../assets/ico/up-arrows.png";
 import { io } from "socket.io-client";
 import { UserContext } from "../../App";
+import { ToggleChat } from "../../Components/ToggleChat"; // Import ToggleChat
 
 export const muntinlupaLocations = {
   barangays: {
@@ -128,6 +129,8 @@ export const BookingDetail = () => {
   const [rideDone, setRideDone] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
   const [tripDetails, setTripDetails] = useState(null);
+  const [showChat, setShowChat] = useState(false);
+  const [chatProps, setChatProps] = useState({});
 
   useEffect(() => {
     if (fromSearch) {
@@ -160,8 +163,16 @@ export const BookingDetail = () => {
       }));
     });
 
-    // Listen for booking accepted by rider
     socket.on("booking_accepted", (data) => {
+      // Only show chat if this booking belongs to this user
+      if (data.booking_id === tripDetails?.booking_id || data.booking_id === tripDetails?.booking_id) {
+        setShowChat(true);
+        setChatProps({
+          userName: user?.name || "User",
+          bookingId: data.booking_id,
+          riderName: data.rider_name,
+        });
+      }
       setTripDetails((prev) => ({
         ...prev,
         rider_name: data.rider_name,
@@ -173,7 +184,7 @@ export const BookingDetail = () => {
       socket.off("booking_confirmation");
       socket.off("booking_accepted");
     };
-  }, []);
+  }, [tripDetails?.booking_id, user?.name]);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
@@ -264,6 +275,17 @@ export const BookingDetail = () => {
   const handleRideDone = () => {
     navigate("/BookingComplete");
   };
+
+  useEffect(() => {
+    if (tripDetails?.booking_id) {
+      const handleBeforeUnload = (e) => {
+        e.preventDefault();
+        e.returnValue = "You cannot leave this page while your booking is active.";
+      };
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+  }, [tripDetails?.booking_id]);
 
   return (
     <MDBContainer fluid className="p-0 vh-100" style={{ position: "relative" }}>
@@ -460,6 +482,30 @@ export const BookingDetail = () => {
               </button>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Chat Component */}
+      {showChat && (
+        <div
+          className="bookingdetail-chat-override"
+          style={{
+            position: "fixed",
+            top: "80px",
+            right: "40px",
+            width: "350px",
+            zIndex: 3000,
+            display: "flex",
+            flexDirection: "column",
+            borderRadius: "12px",
+            overflow: "hidden",
+          }}
+        >
+          <ToggleChat
+            userName={chatProps.userName}
+            autoOpen={true}
+            floating={false}
+          />
         </div>
       )}
     </MDBContainer>
