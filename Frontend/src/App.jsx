@@ -13,6 +13,7 @@ import { BookingComplete } from "./pages/Booking/BookingComplete";
 import { Home } from "./pages/Home/Home";
 import { PaymentMethods } from "./pages/PaymentMethods/PaymentMethods";
 import { Account } from "./pages/Account/Account";
+import { TodaList } from "./pages/TodaList/TodaList";
 import { API_BASE_URL } from "./config/config";
 import { NotificationProvider, NotificationContext } from "./contexts/NotificationContext";
 import { io } from "socket.io-client";
@@ -135,6 +136,7 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/payments" element={<PaymentMethods />} />
                 <Route path="/Messages" element={<Messages />} />
+                <Route path="/todaList" element={<TodaList />} />
                 <Route path="/Account" element={<Account />} />
                 <Route path="/Notif" element={<Notif />} />
                 <Route path="/Booking" element={<BookingApp />} />
