@@ -1,6 +1,7 @@
 import { MDBCol, MDBContainer, MDBRow } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
-import locationIcon from "../../assets/ico/location.png";
+import tricycleIcon from "../../assets/ico/tricycle.png";
+import tricycleWhiteIcon from "../../assets/ico/tricycle-white.png";
 import userIcon from "../../assets/ico/user.png";
 import News1 from "../../assets/img/News1.jpg";
 import News2 from "../../assets/img/BgforBooking.jpg";
@@ -98,7 +99,7 @@ export const Home = () => {
               className={`btn ${isDark && "bg-white"}`}
               onClick={routeToBooking}
             >
-              <img src={locationIcon} height={50} width={50} />
+              <img src={isDark ? tricycleWhiteIcon : tricycleIcon} height={50} width={50} />
             </button>
           )}
 
