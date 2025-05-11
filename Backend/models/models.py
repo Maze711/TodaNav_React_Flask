@@ -9,7 +9,7 @@ class User(db.Model):
     user_id = db.Column(db.String(20), unique=True, nullable=False)  # New field
     name = db.Column(db.String(150), nullable=False)
     contact_no = db.Column(db.String(225), nullable=True)  # Add contact_no field
-    # user_profile = db.Column(db.BLOB, nullable=True)  # Add user_profile field
+    user_profile = db.Column(db.LargeBinary, nullable=True)  # Add user_profile field
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default="USER")  # Add role field

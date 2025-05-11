@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { MDBNavbar, MDBContainer, MDBNavbarNav } from "mdb-react-ui-kit";
 import { useTheme } from "../ThemeContext";
@@ -17,8 +17,10 @@ import walletIconWhite from "../assets/ico/wallet-white.png";
 import locateIconWhite from "../assets/ico/location-white.png";
 import chattingIconWhite from "../assets/ico/chatting-white.png";
 import notificationIconWhite from "../assets/ico/notification-white.png";
+import { UserContext } from "../App";
 
 export const BottomNav = () => {
+  const { user } = useContext(UserContext);
   const { isDark } = useTheme();
   const { unread, clearUnread } = React.useContext(NotificationContext);
   const location = useLocation();
@@ -46,31 +48,48 @@ export const BottomNav = () => {
           <li className="nav-item text-center">
             <Link to="/home" className="nav-link">
               <img src={icons.home} alt="Home" className="nav-icon" />
-              <div className="nav-text" style={textStyle}>Home</div>
+              <div className="nav-text" style={textStyle}>
+                Home
+              </div>
             </Link>
           </li>
           <li className="nav-item text-center">
             <Link to="/payments" className="nav-link">
               <img src={icons.wallet} alt="Payments" className="nav-icon" />
-              <div className="nav-text" style={textStyle}>Payments</div>
+              <div className="nav-text" style={textStyle}>
+                Payments
+              </div>
             </Link>
           </li>
-          <li className="nav-item text-center">
-            <Link to="/Booking" className="nav-link">
-              <img src={icons.locate} alt="Booking" className="nav-icon" />
-              <div className="nav-text" style={textStyle}>Locate</div>
-            </Link>
-          </li>
+          {user.role == "USER" && (
+            // Only user will be able to see this navigation
+            <li className="nav-item text-center">
+              <Link to="/Booking" className="nav-link">
+                <img src={icons.locate} alt="Booking" className="nav-icon" />
+                <div className="nav-text" style={textStyle}>
+                  Locate
+                </div>
+              </Link>
+            </li>
+          )}
           <li className="nav-item text-center">
             <Link to="/messages" className="nav-link">
               <img src={icons.chatting} alt="Messages" className="nav-icon" />
-              <div className="nav-text" style={textStyle}>Messages</div>
+              <div className="nav-text" style={textStyle}>
+                Messages
+              </div>
             </Link>
           </li>
           <li className="nav-item text-center" style={{ position: "relative" }}>
             <Link to="/Notif" className="nav-link">
-              <img src={icons.notification} alt="Notification" className="nav-icon" />
-              <div className="nav-text" style={textStyle}>Notification</div>
+              <img
+                src={icons.notification}
+                alt="Notification"
+                className="nav-icon"
+              />
+              <div className="nav-text" style={textStyle}>
+                Notification
+              </div>
               {unread && (
                 <span
                   style={{

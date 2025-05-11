@@ -6,13 +6,15 @@ import News1 from "../../assets/img/News1.jpg";
 import News2 from "../../assets/img/BgforBooking.jpg";
 import { useTheme } from "../../ThemeContext";
 import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
-import React, { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { muntinlupaLocations } from "../Booking/BookingDetail";
+import { UserContext } from "../../App";
 
 export const Home = () => {
   const { isDark } = useTheme();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
 
   // State for search input and selected location
   const [searchValue, setSearchValue] = useState("");
@@ -35,11 +37,11 @@ export const Home = () => {
 
   const routeToAccount = () => {
     navigate("/Account");
-  }
+  };
 
   const routeToBooking = () => {
     navigate("/Booking");
-  }
+  };
 
   const news_list = [
     {
@@ -91,24 +93,34 @@ export const Home = () => {
           />
         </MDBCol>
         <MDBCol md="3" className="d-flex gap-3">
-          <button className={`btn ${isDark && "bg-white"}`} onClick={routeToBooking}>
-            <img src={locationIcon} height={50} width={50} />
-          </button>
-          <button className={`btn ${isDark && "bg-white"}`} onClick={routeToAccount}>
+          {user.role == "USER" && (
+            <button
+              className={`btn ${isDark && "bg-white"}`}
+              onClick={routeToBooking}
+            >
+              <img src={locationIcon} height={50} width={50} />
+            </button>
+          )}
+
+          <button
+            className={`btn ${isDark && "bg-white"}`}
+            onClick={routeToAccount}
+          >
             <img src={userIcon} height={50} width={50} />
           </button>
         </MDBCol>
       </MDBRow>
 
-      {/* Start Booking Button Section */}
-      <button
-        type="button"
-        className="btn p-3 mb-3"
-        style={{ backgroundColor: "#b26d18" }}
-        onClick={routeToBooking}
-      >
-        <strong>Start Booking Now</strong>
-      </button>
+      {user.role == "USER" && (
+        <button
+          type="button"
+          className="btn p-3 mb-3"
+          style={{ backgroundColor: "#b26d18" }}
+          onClick={routeToBooking}
+        >
+          <strong>Start Booking Now</strong>
+        </button>
+      )}
 
       {/* News Section */}
       <h4>LATEST NEWS</h4>
