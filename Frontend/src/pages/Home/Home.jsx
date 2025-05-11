@@ -40,7 +40,7 @@ export const Home = () => {
   };
 
   const routeToBooking = () => {
-    navigate("/Booking");
+    navigate("/TodaList");
   };
 
   const news_list = [
