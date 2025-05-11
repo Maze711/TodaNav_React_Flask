@@ -17,6 +17,7 @@ import { TodaList } from "./pages/TodaList/TodaList";
 import { API_BASE_URL } from "./config/config";
 import { NotificationProvider, NotificationContext } from "./contexts/NotificationContext";
 import { io } from "socket.io-client";
+import { LocationProvider } from "./contexts/LocationContext";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
 export const UserContext = createContext(null);
@@ -107,43 +108,45 @@ function App() {
       <ApiUrlContext.Provider value={API_BASE_URL}>
         <UserContext.Provider value={{ user, setUser }}>
           <NotificationProvider>
-            <Router>
-              <ThemeToggleButton />
-              <Toaster
-                position="top-center"
-                toastOptions={{
-                  duration: 2000,
-                  style: {
-                    background: "#333",
-                    color: "#fff",
-                  },
-                  success: {
+            <LocationProvider>
+              <Router>
+                <ThemeToggleButton />
+                <Toaster
+                  position="top-center"
+                  toastOptions={{
+                    duration: 2000,
                     style: {
-                      background: "#198754",
+                      background: "#333",
+                      color: "#fff",
                     },
-                  },
-                  error: {
-                    style: {
-                      background: "#dc3545",
+                    success: {
+                      style: {
+                        background: "#198754",
+                      },
                     },
-                  },
-                }}
-                reverseOrder={false}
-              />
-              <GlobalNotificationListener socket={socket} user={user} />
-              <Routes>
-                <Route path="/" element={<UserForm setUser={setUser} />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/payments" element={<PaymentMethods />} />
-                <Route path="/Messages" element={<Messages />} />
-                <Route path="/todaList" element={<TodaList />} />
-                <Route path="/Account" element={<Account />} />
-                <Route path="/Notif" element={<Notif />} />
-                <Route path="/Booking" element={<BookingApp />} />
-                <Route path="/BookingDetail" element={<BookingDetail />} />
-                <Route path="/BookingComplete" element={<BookingComplete />} />
-              </Routes>
-            </Router>
+                    error: {
+                      style: {
+                        background: "#dc3545",
+                      },
+                    },
+                  }}
+                  reverseOrder={false}
+                />
+                <GlobalNotificationListener socket={socket} user={user} />
+                <Routes>
+                  <Route path="/" element={<UserForm setUser={setUser} />} />
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/payments" element={<PaymentMethods />} />
+                  <Route path="/Messages" element={<Messages />} />
+                  <Route path="/todaList" element={<TodaList />} />
+                  <Route path="/Account" element={<Account />} />
+                  <Route path="/Notif" element={<Notif />} />
+                  <Route path="/Booking" element={<BookingApp />} />
+                  <Route path="/BookingDetail" element={<BookingDetail />} />
+                  <Route path="/BookingComplete" element={<BookingComplete />} />
+                </Routes>
+              </Router>
+            </LocationProvider>
           </NotificationProvider>
         </UserContext.Provider>
       </ApiUrlContext.Provider>

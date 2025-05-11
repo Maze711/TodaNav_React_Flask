@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { MDBNavbar, MDBContainer, MDBNavbarNav } from "mdb-react-ui-kit";
 import { useTheme } from "../ThemeContext";
 import { NotificationContext } from "../contexts/NotificationContext";
+import { LocationContext } from "../contexts/LocationContext";
+import { UserContext } from "../App";
 
 // Black icons
 import homeIcon from "../assets/ico/home.png";
@@ -11,22 +13,21 @@ import locateIcon from "../assets/ico/location.png";
 import chattingIcon from "../assets/ico/chatting.png";
 import notificationIcon from "../assets/ico/notification.png";
 
-// White icons (download these and place them in the same folder)
+// White icons
 import homeIconWhite from "../assets/ico/home-white.png";
 import walletIconWhite from "../assets/ico/wallet-white.png";
 import locateIconWhite from "../assets/ico/location-white.png";
 import chattingIconWhite from "../assets/ico/chatting-white.png";
 import notificationIconWhite from "../assets/ico/notification-white.png";
-import { UserContext } from "../App";
 
 export const BottomNav = () => {
   const { user } = useContext(UserContext);
   const { isDark } = useTheme();
-  const { unread, clearUnread } = React.useContext(NotificationContext);
+  const { unread, clearUnread } = useContext(NotificationContext);
   const location = useLocation();
+  const { updateUserLocation } = useContext(LocationContext);
 
   React.useEffect(() => {
-    // Clear unread badge when visiting /Notif
     if (location.pathname === "/Notif") clearUnread();
   }, [location, clearUnread]);
 
@@ -38,8 +39,12 @@ export const BottomNav = () => {
     notification: isDark ? notificationIconWhite : notificationIcon,
   };
 
-  // Define the text style: black text when dark mode is on.
   const textStyle = { color: isDark ? "black" : "inherit" };
+
+  const handleLocateClick = () => {
+    const bayananCoords = [14.407797, 121.049972];
+    updateUserLocation(bayananCoords);
+  };
 
   return (
     <MDBNavbar fixed="bottom" light bgColor="light" className="bottom-nav">
@@ -61,10 +66,9 @@ export const BottomNav = () => {
               </div>
             </Link>
           </li>
-          {user.role == "USER" && (
-            // Only user will be able to see this navigation
+          {user.role === "USER" && (
             <li className="nav-item text-center">
-              <Link to="/Booking" className="nav-link">
+              <Link to="/BookingDetail" className="nav-link" onClick={handleLocateClick}>
                 <img src={icons.locate} alt="Booking" className="nav-icon" />
                 <div className="nav-text" style={textStyle}>
                   Locate
@@ -82,11 +86,7 @@ export const BottomNav = () => {
           </li>
           <li className="nav-item text-center" style={{ position: "relative" }}>
             <Link to="/Notif" className="nav-link">
-              <img
-                src={icons.notification}
-                alt="Notification"
-                className="nav-icon"
-              />
+              <img src={icons.notification} alt="Notification" className="nav-icon" />
               <div className="nav-text" style={textStyle}>
                 Notification
               </div>

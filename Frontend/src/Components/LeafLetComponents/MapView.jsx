@@ -17,6 +17,7 @@ export const MapView = ({
   toSearch,
   isDark,
   routeProfile = "driving", // You can set this prop to "walking", "cycling", or "driving"
+  todaMarkers = [], // New prop for TODA markers
 }) => {
   const [routeCoords, setRouteCoords] = useState([]);
 
@@ -24,7 +25,7 @@ export const MapView = ({
     const fetchRoute = async () => {
       if (fromCoords && toCoords) {
         // Use the selected profile for more accurate routing
-        const url = `https://router.project-osrm.org/route/v1/${routeProfile}/${fromCoords[1]},${fromCoords[0]};${toCoords[1]},${toCoords[0]}?overview=full&geometries=geojson`;
+        const url = "https://router.project-osrm.org/route/v1/" + routeProfile + "/" + fromCoords[1] + "," + fromCoords[0] + ";" + toCoords[1] + "," + toCoords[0] + "?overview=full&geometries=geojson";
         const res = await fetch(url);
         const data = await res.json();
         if (data.routes && data.routes.length > 0) {
@@ -74,6 +75,17 @@ export const MapView = ({
           </Popup>
         </Marker>
       )}
+      {todaMarkers.map((toda, index) => (
+        <Marker key={index} position={toda.coordinates}>
+          <Popup>
+            {toda.name}
+            <br />
+            {toda.location}
+            <br />
+            Lat: {toda.coordinates[0]}, Lng: {toda.coordinates[1]}
+          </Popup>
+        </Marker>
+      ))}
       {routeCoords.length > 0 && (
         <Polyline
           positions={routeCoords}
