@@ -12,7 +12,7 @@ import arrowUpIcon from "../../assets/ico/up-arrows.png";
 import { io } from "socket.io-client";
 import { UserContext } from "../../App";
 import { ToggleChat } from "../../Components/ToggleChat"; // Import ToggleChat
-import { muntinlupaLocations, calculateDistance, calculateFare } from "../../contexts/LocationContext.jsx";
+import { muntinlupaLocations, calculateDistance, calculateFare, LocationContext, todaLocations, findNearbyTODA } from "../../contexts/LocationContext.jsx";
 
 const socket = io("http://127.0.0.1:5000"); // Connect to the WebSocket server
 
@@ -21,6 +21,8 @@ export const BookingDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(UserContext); // Access user details from context
+  const { userLocation, updateUserLocation, findNearbyTODA } = useContext(LocationContext);
+
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
   const profileIcon = isDark ? userIcon : userWhiteIcon;
@@ -46,6 +48,7 @@ export const BookingDetail = () => {
   const [tripDetails, setTripDetails] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [chatProps, setChatProps] = useState({});
+  const [nearbyTODAs, setNearbyTODAs] = useState([]);
 
   useEffect(() => {
     if (fromSearch) {
@@ -80,7 +83,7 @@ export const BookingDetail = () => {
 
     socket.on("booking_accepted", (data) => {
       // Only show chat if this booking belongs to this user
-      if (data.booking_id === tripDetails?.booking_id || data.booking_id === tripDetails?.booking_id) {
+      if (data.booking_id === tripDetails?.booking_id) {
         setShowChat(true);
         setChatProps({
           userName: user?.name || "User",
@@ -117,6 +120,14 @@ export const BookingDetail = () => {
       ]);
     }
   }, [fromCoords, toCoords]);
+
+  // Update nearby TODAs when userLocation changes
+  useEffect(() => {
+    if (userLocation && userLocation.length === 2) {
+      const nearby = findNearbyTODA(userLocation[0], userLocation[1]);
+      setNearbyTODAs(nearby);
+    }
+  }, [userLocation, findNearbyTODA]);
 
   const handleLocationSelect = (location, setSearch, setCoords, field) => {
     let coordinates = null;
@@ -171,6 +182,13 @@ export const BookingDetail = () => {
     navigate("/BookingComplete");
   };
 
+  // Function to simulate real-time location update (for now fixed to Bayanan)
+  const locateUser = () => {
+    const bayananCoords = [14.407797, 121.049972];
+    updateUserLocation(bayananCoords);
+    setMapCenter(bayananCoords);
+  };
+
   useEffect(() => {
     if (tripDetails?.booking_id) {
       const handleBeforeUnload = (e) => {
@@ -203,6 +221,7 @@ export const BookingDetail = () => {
           fromSearch={fromSearch}
           toSearch={toSearch}
           isDark={isDark}
+          todaMarkers={nearbyTODAs} // Pass nearby TODAs as markers
         />
       </div>
 
@@ -306,6 +325,44 @@ export const BookingDetail = () => {
               Trip Details
             </h3>
             <hr style={{ border: "2px solid", borderColor: "black" }} />
+
+            {/* Nearby TODA section moved here, above rider info */}
+            {nearbyTODAs.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "1rem",
+                  marginBottom: "1rem",
+                  overflowX: "auto",
+                  paddingBottom: "0.5rem",
+                }}
+              >
+                {nearbyTODAs.map((toda, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      minWidth: "250px",
+                      border: `2px solid ${mainBorder}`,
+                      borderRadius: "12px",
+                      padding: "1rem",
+                      backgroundColor: containerBg,
+                      color: textColor,
+                      flexShrink: 0,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    <h6>{toda.name}</h6>
+                    <p style={{ fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+                      {toda.location}
+                    </p>
+                    <p style={{ fontSize: "0.8rem", fontStyle: "italic" }}>
+                      Coordinates: {toda.coordinates[0].toFixed(6)}°, {toda.coordinates[1].toFixed(6)}°
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div
               className="d-flex align-items-center mb-3"
               style={{

@@ -1,15 +1,17 @@
+import React, { createContext, useState } from "react";
+
 export const muntinlupaLocations = () => ({
   barangays: {
-    Alabang: [14.418364, 121.0385],
+    "Alabang": [14.418364, 121.0385],
     "Ayala Alabang": [14.406064, 121.022355],
-    Bayanan: [14.407797, 121.049972],
-    Buli: [14.443, 121.0505],
-    Cupang: [14.4315, 121.04861],
+    "Bayanan": [14.407797, 121.049972],
+    "Buli": [14.443, 121.0505],
+    "Cupang": [14.4315, 121.04861],
     "New Alabang Village": [14.4175, 121.0275],
-    Poblacion: [14.385411, 121.029033],
-    Putatan: [14.398367, 121.036378],
-    Sucat: [14.4365, 121.0503],
-    Tunasan: [14.372544, 121.036378],
+    "Poblacion": [14.385411, 121.029033],
+    "Putatan": [14.398367, 121.036378],
+    "Sucat": [14.4365, 121.0503],
+    "Tunasan": [14.372544, 121.036378],
   },
   landmarks: {
     "Alabang Town Center": [14.423477, 121.029795],
@@ -103,4 +105,51 @@ export const calculateFare = (dist) => {
   const baseFare = 40;
   const perKm = 12;
   return Math.round(baseFare + dist * perKm);
+};
+
+// TODA locations data
+export const todaLocations = [
+  {
+    name: "BBTODAI (Bayanan Baywalk Tricycle Operators and Drivers Association, Inc.)",
+    location: "Barangay Bayanan, Muntinlupa City",
+    coordinates: [14.407797, 121.049972],
+  },
+  {
+    name: "ABCMSTODA (Alabang-Bayanan-Cupang-Market Site Tricycle Operators and Drivers Association)",
+    location: "Primarily operates in Barangays Alabang, Bayanan, and Cupang, Muntinlupa City",
+    coordinates: [14.418364, 121.0385],
+  },
+];
+
+// Helper function to find nearby TODAs within a certain radius (e.g., 5 km)
+export const findNearbyTODA = (userLat, userLon, radiusKm = 5) => {
+  return todaLocations.filter((toda) => {
+    const dist = calculateDistance(
+      userLat,
+      userLon,
+      toda.coordinates[0],
+      toda.coordinates[1]
+    );
+    return dist <= radiusKm;
+  });
+};
+
+// LocationContext to provide user location and updater
+export const LocationContext = createContext();
+
+export const LocationProvider = ({ children }) => {
+  const [userLocation, setUserLocation] = useState([14.407797, 121.049972]); // Default to Bayanan
+
+  // Function to update user location (simulate real-time)
+  const updateUserLocation = (newLocation) => {
+    setUserLocation(newLocation);
+  };
+
+  return (
+    <LocationContext.Provider
+      value={{ userLocation, updateUserLocation, findNearbyTODA }}
+    >
+      {children}
+    </LocationContext.Provider>
+  );
 };
