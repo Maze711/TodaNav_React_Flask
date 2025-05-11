@@ -11,17 +11,17 @@ import arrowUpIcon from "../../assets/ico/up-arrows.png";
 
 import { io } from "socket.io-client";
 import { UserContext } from "../../App";
-import { ToggleChat } from "../../Components/ToggleChat"; // Import ToggleChat
-import { muntinlupaLocations, calculateDistance, calculateFare, LocationContext, todaLocations, findNearbyTODA } from "../../contexts/LocationContext.jsx";
+import { ToggleChat } from "../../Components/ToggleChat";
+import { muntinlupaLocations, calculateDistance, calculateFare, LocationContext, findNearbyTODA } from "../../contexts/LocationContext.jsx";
 
-const socket = io("http://127.0.0.1:5000"); // Connect to the WebSocket server
+const socket = io("http://127.0.0.1:5000");
 
 export const BookingDetail = () => {
   const { isDark } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useContext(UserContext); // Access user details from context
-  const { userLocation, updateUserLocation, findNearbyTODA } = useContext(LocationContext);
+  const { user } = useContext(UserContext);
+  const { userLocation, findNearbyTODA } = useContext(LocationContext);
 
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
@@ -29,7 +29,6 @@ export const BookingDetail = () => {
   const circleBg = isDark ? "#fff" : "transparent";
   const mainBorder = "#B26D18";
 
-  // Helper to get query params
   const getQueryParam = (param) => {
     const params = new URLSearchParams(location.search);
     return params.get(param) || "";
@@ -70,7 +69,6 @@ export const BookingDetail = () => {
     }
   }, [fromSearch]);
 
-  // Listen for booking confirmation from the backend
   useEffect(() => {
     socket.on("booking_confirmation", (data) => {
       setTripDetails((prev) => ({
@@ -82,7 +80,6 @@ export const BookingDetail = () => {
     });
 
     socket.on("booking_accepted", (data) => {
-      // Only show chat if this booking belongs to this user
       if (data.booking_id === tripDetails?.booking_id) {
         setShowChat(true);
         setChatProps({
@@ -121,11 +118,11 @@ export const BookingDetail = () => {
     }
   }, [fromCoords, toCoords]);
 
-  // Update nearby TODAs when userLocation changes
   useEffect(() => {
     if (userLocation && userLocation.length === 2) {
       const nearby = findNearbyTODA(userLocation[0], userLocation[1]);
       setNearbyTODAs(nearby);
+      setMapCenter(userLocation);
     }
   }, [userLocation, findNearbyTODA]);
 
@@ -182,24 +179,6 @@ export const BookingDetail = () => {
     navigate("/BookingComplete");
   };
 
-  // Function to simulate real-time location update (for now fixed to Bayanan)
-  const locateUser = () => {
-    const bayananCoords = [14.407797, 121.049972];
-    updateUserLocation(bayananCoords);
-    setMapCenter(bayananCoords);
-  };
-
-  useEffect(() => {
-    if (tripDetails?.booking_id) {
-      const handleBeforeUnload = (e) => {
-        e.preventDefault();
-        e.returnValue = "You cannot leave this page while your booking is active.";
-      };
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-    }
-  }, [tripDetails?.booking_id]);
-
   return (
     <MDBContainer fluid className="p-0 vh-100" style={{ position: "relative" }}>
       <h1>Welcome, {user?.name || "Guest"}!</h1>
@@ -221,7 +200,8 @@ export const BookingDetail = () => {
           fromSearch={fromSearch}
           toSearch={toSearch}
           isDark={isDark}
-          todaMarkers={nearbyTODAs} // Pass nearby TODAs as markers
+          todaMarkers={nearbyTODAs}
+          userLocation={userLocation}
         />
       </div>
 
@@ -279,163 +259,191 @@ export const BookingDetail = () => {
         </MDBRow>
       </div>
 
-      {/* Toggle Arrow */}
+      {/* Container wrapping TODA info, horizontal line, and rider info */}
       <div
         style={{
           position: "fixed",
-          bottom: showTripDetails ? "275px" : "10px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 2,
-          cursor: "pointer",
-          backgroundColor: containerBg,
-          borderRadius: "50%",
-          padding: "0.5rem",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1,
           border: `2px solid ${mainBorder}`,
+          borderTopLeftRadius: "12px",
+          borderTopRightRadius: "12px",
+          backgroundColor: containerBg,
+          boxShadow: "0 -5px 15px rgba(0,0,0,0.1)",
+          pointerEvents: "auto",
+          padding: "1rem 1.5rem 1.5rem 1.5rem",
         }}
-        onClick={() => setShowTripDetails((prev) => !prev)}
       >
-        <img
-          src={showTripDetails ? arrowDownIcon : arrowUpIcon}
-          alt="toggle arrow"
-          style={{ width: "24px", height: "24px" }}
-        />
-      </div>
-
-      {/* Trip Details Panel */}
-      {showTripDetails && (
+        {/* Toggle button attached to this container */}
         <div
-          className="px-4"
           style={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1,
-            border: `2px solid ${mainBorder}`,
-            borderTopLeftRadius: "12px",
-            borderTopRightRadius: "12px",
+            position: "absolute",
+            top: "-18px",
+            left: "50%",
+            transform: "translateX(-50%)",
             backgroundColor: containerBg,
-            boxShadow: "0 -5px 15px rgba(0,0,0,0.1)",
-            pointerEvents: "auto",
+            border: `2px solid ${mainBorder}`,
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+            transition: "background-color 0.3s ease",
+            zIndex: 2,
           }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = mainBorder}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = containerBg}
+          onClick={() => setShowTripDetails((prev) => !prev)}
         >
-          <div className="p-4">
-            <h3 className="fw-bold text-center" style={{ color: textColor }}>
-              Trip Details
-            </h3>
-            <hr style={{ border: "2px solid", borderColor: "black" }} />
+          <img
+            src={showTripDetails ? arrowDownIcon : arrowUpIcon}
+            alt="toggle arrow"
+            style={{ width: "24px", height: "24px" }}
+          />
+        </div>
 
-            {/* Nearby TODA section moved here, above rider info */}
-            {nearbyTODAs.length > 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  marginBottom: "1rem",
-                  overflowX: "auto",
-                  paddingBottom: "0.5rem",
-                }}
-              >
-                {nearbyTODAs.map((toda, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      minWidth: "250px",
-                      border: `2px solid ${mainBorder}`,
-                      borderRadius: "12px",
-                      padding: "1rem",
-                      backgroundColor: containerBg,
-                      color: textColor,
-                      flexShrink: 0,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    <h6>{toda.name}</h6>
-                    <p style={{ fontSize: "0.9rem", marginBottom: "0.5rem" }}>
-                      {toda.location}
-                    </p>
-                    <p style={{ fontSize: "0.8rem", fontStyle: "italic" }}>
-                      Coordinates: {toda.coordinates[0].toFixed(6)}°, {toda.coordinates[1].toFixed(6)}°
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Trip Details heading and horizontal line */}
+        <h3 className="fw-bold text-center" style={{ color: textColor }}>
+          Trip Details
+        </h3>
+        <hr style={{ border: "2px solid", borderColor: "black" }} />
 
+        {/* Nearby TODA section with distance in meters */}
+        {showTripDetails && nearbyTODAs.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              gap: "1rem",
+              marginBottom: "1rem",
+              overflowX: "auto",
+              paddingBottom: "0.5rem",
+            }}
+          >
+            {nearbyTODAs.map((toda, index) => {
+              const distMeters = userLocation
+                ? Math.round(
+                    calculateDistance(
+                      userLocation[0],
+                      userLocation[1],
+                      toda.coordinates[0],
+                      toda.coordinates[1]
+                    ) * 1000
+                  )
+                : null;
+              return (
+                <div
+                  key={index}
+                  style={{
+                    minWidth: "250px",
+                    border: `2px solid ${mainBorder}`,
+                    borderRadius: "12px",
+                    padding: "1rem",
+                    backgroundColor: containerBg,
+                    color: textColor,
+                    flexShrink: 0,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  <h6>{toda.name}</h6>
+                  <p style={{ fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+                    {toda.location}
+                  </p>
+                  <p style={{ fontSize: "0.8rem", fontStyle: "italic" }}>
+                    Coordinates: {toda.coordinates[0].toFixed(6)}°, {toda.coordinates[1].toFixed(6)}°
+                  </p>
+                  {distMeters !== null && (
+                    <p style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+                      Distance: {distMeters} meters
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Rider info */}
+        {showTripDetails && (
+          <div
+            className="d-flex align-items-center mb-3"
+            style={{
+              border: `2px solid ${mainBorder}`,
+              borderRadius: "12px",
+              padding: "1rem",
+            }}
+          >
             <div
-              className="d-flex align-items-center mb-3"
               style={{
-                border: `2px solid ${mainBorder}`,
-                borderRadius: "12px",
-                padding: "1rem",
+                width: "54px",
+                height: "54px",
+                borderRadius: "50%",
+                backgroundColor: circleBg,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "1rem",
               }}
             >
-              <div
-                style={{
-                  width: "54px",
-                  height: "54px",
-                  borderRadius: "50%",
-                  backgroundColor: circleBg,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginRight: "1rem",
-                }}
-              >
-                <img
-                  src={profileIcon}
-                  alt="Profile"
-                  width="50"
-                  height="50"
-                  style={{ borderRadius: "50%" }}
-                />
-              </div>
-              <div style={{ flexGrow: 1 }}>
-                <h5 className="fw-bold mb-1" style={{ color: textColor }}>
-                  {tripDetails?.rider_name || "Rider Name"}{" "}
-                  <span style={{ fontWeight: "normal" }}>
-                    ({tripDetails?.user_id || "Rider ID"})
-                  </span>
-                </h5>
-                <p className="mb-0" style={{ color: textColor }}>
-                  Booking ID: {tripDetails?.booking_id || "—"}
-                </p>
-                <p className="mb-0" style={{ color: textColor }}>
-                  From: {tripDetails?.from_location || fromSearch || "—"} To: {tripDetails?.to_location || toSearch || "—"}
-                </p>
-              </div>
-              <div className="text-end">
-                <span style={{ color: textColor, fontWeight: "bold" }}>
-                  Estimated fare:{" "}
-                </span>
-                <span className="fw-bold" style={{ color: textColor }}>
-                  {fare ? `₱${fare}` : "—"}
-                </span>
-              </div>
+              <img
+                src={profileIcon}
+                alt="Profile"
+                width="50"
+                height="50"
+                style={{ borderRadius: "50%" }}
+              />
             </div>
-
-            {!rideDone ? (
-              <button
-                className="btn btn-success w-100"
-                style={{ backgroundColor: mainBorder, border: "none" }}
-                onClick={handleBookRide}
-                disabled={isBooking}
-              >
-                {isBooking ? "Booking..." : "Book Ride"}
-              </button>
-            ) : (
-              <button
-                className="btn btn-primary w-100"
-                style={{ backgroundColor: "#198754", border: "none" }}
-                onClick={handleRideDone}
-              >
-                Ride Done
-              </button>
-            )}
+            <div style={{ flexGrow: 1 }}>
+              <h5 className="fw-bold mb-1" style={{ color: textColor }}>
+                {tripDetails?.rider_name || "Rider Name"}{" "}
+                <span style={{ fontWeight: "normal" }}>
+                  ({tripDetails?.user_id || "Rider ID"})
+                </span>
+              </h5>
+              <p className="mb-0" style={{ color: textColor }}>
+                Booking ID: {tripDetails?.booking_id || "—"}
+              </p>
+              <p className="mb-0" style={{ color: textColor }}>
+                From: {tripDetails?.from_location || fromSearch || "—"} To: {tripDetails?.to_location || toSearch || "—"}
+              </p>
+            </div>
+            <div className="text-end">
+              <span style={{ color: textColor, fontWeight: "bold" }}>
+                Estimated fare:{" "}
+              </span>
+              <span className="fw-bold" style={{ color: textColor }}>
+                {fare ? `₱${fare}` : "—"}
+              </span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Book Ride / Ride Done button */}
+        {showTripDetails && (
+          !rideDone ? (
+            <button
+              className="btn btn-success w-100"
+              style={{ backgroundColor: mainBorder, border: "none" }}
+              onClick={handleBookRide}
+              disabled={isBooking}
+            >
+              {isBooking ? "Booking..." : "Book Ride"}
+            </button>
+          ) : (
+            <button
+              className="btn btn-primary w-100"
+              style={{ backgroundColor: "#198754", border: "none" }}
+              onClick={handleRideDone}
+            >
+              Ride Done
+            </button>
+          )
+        )}
+      </div>
 
       {/* Chat Component */}
       {showChat && (
