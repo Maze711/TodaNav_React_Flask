@@ -38,8 +38,12 @@ export const LocationSearchInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        onFocus={() => setShowDropdown(true)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+        onFocus={() => {
+          setShowDropdown(true);
+        }}
+        onBlur={() => {
+          setTimeout(() => setShowDropdown(false), 200);
+        }}
         style={{
           width: "100%",
           padding: "0.5rem",
