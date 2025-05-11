@@ -8,7 +8,7 @@ import { useTheme } from "../../ThemeContext";
 import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { muntinlupaLocations } from "../Booking/BookingDetail";
+import { muntinlupaLocations } from "../../contexts/LocationContext.jsx";
 import { UserContext } from "../../App";
 
 export const Home = () => {
@@ -21,7 +21,7 @@ export const Home = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Use real locations
-  const locations = muntinlupaLocations;
+  const locations = muntinlupaLocations();
 
   const mainBorder = isDark ? "#fff" : "#222";
   const containerBg = isDark ? "#222" : "#fff";

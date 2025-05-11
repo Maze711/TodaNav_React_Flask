@@ -15,7 +15,7 @@ export const LocationDropdown = ({
         width: "100%",
         maxHeight: "300px",
         overflowY: "auto",
-        backgroundColor: containerBg,
+        backgroundColor: containerBg || "#fff",
         border: `1px solid ${mainBorder}`,
         borderRadius: "4px",
         zIndex: 10,

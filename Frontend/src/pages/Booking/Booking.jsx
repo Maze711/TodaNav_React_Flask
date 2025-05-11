@@ -12,7 +12,7 @@ import bgImage from "../../assets/img/LandingBanner.png";
 import { useTheme } from "../../ThemeContext";
 import { LocationSearchInput } from "../../Components/LeafLetComponents/LocationSearch";
 import { useNavigate } from "react-router-dom";
-import { muntinlupaLocations } from "./BookingDetail";
+import { muntinlupaLocations } from "../../contexts/LocationContext.jsx";
 
 export const BookingApp = () => {
   const { isDark } = useTheme();
@@ -62,12 +62,12 @@ export const BookingApp = () => {
                   value={searchValue}
                   onChange={handleSearchChange}
                   placeholder="WHERE TO?"
-                  locations={muntinlupaLocations}
+                  locations={muntinlupaLocations()}
                   onSelect={handleSelect}
                   isDark={isDark}
                   textColor={textColor}
                   mainBorder={mainBorder}
-                  containerBg={containerBg}
+                  containerBg={"#fff"}
                 />
               </div>
             </MDBRow>
