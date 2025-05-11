@@ -1,6 +1,6 @@
 import { MDBContainer, MDBRow, MDBCol, MDBInput } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
-import userImg from "../../assets/img/RiderProfile.jpg";
+import defaultProfile from "../../assets/img/default_profile.jpg"
 
 // Light Mode Icons
 import editIcon from "../../assets/ico/edit_light_ico.svg";
@@ -37,7 +37,8 @@ export const Account = () => {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-  const [userProfile, setUserProfile] = useState(userImg);
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileFile, setProfileFile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -47,6 +48,8 @@ export const Account = () => {
   useEffect(() => {
     const userId = user?.user_id || getUserId();
     if (!userId) return;
+    
+    // Fetch user data
     fetch(`http://localhost:5000/api/user/by_userid/${userId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -54,6 +57,24 @@ export const Account = () => {
           name: data.name || "",
           contact_no: data.contact_no || "",
         });
+        
+        // Also fetch the user's profile image if it exists
+        fetch(`http://localhost:5000/api/user/profile_image/${userId}`)
+          .then(response => {
+            if (response.ok) {
+              return response.blob();
+            }
+            throw new Error('Failed to fetch profile image');
+          })
+          .then(imageBlob => {
+            const imageUrl = URL.createObjectURL(imageBlob);
+            setEditForm({...editForm, })
+            setUserProfile(imageUrl);
+          })
+          .catch(error => {
+            console.error("Error fetching profile image:", error);
+            setUserProfile(null);
+          });
       });
   }, [user]);
 
@@ -71,7 +92,8 @@ export const Account = () => {
       name: user.name || "",
       contact_no: user.contact_no || "",
     });
-    setUserProfile(userImg); // Reset the profile image to default
+    setProfileFile(null);
+
   };
 
   const handleLogout = () => {
@@ -79,27 +101,12 @@ export const Account = () => {
     if (!isLoggedOut) return;
 
     // Clears any user-related data
-    localStorage.removeItem("user"); // Remove the user from localStorage
+    localStorage.removeItem("user"); 
     toast.success("Logged out successfully!");
 
     // Redirect back to login page
     navigate("/");
   };
-
-  const imgToBlob = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        resolve(event.target.result); // Base64 string
-      };    
-      
-      reader.onerror = (error) => {
-        reject(error);
-      };
-      
-      // Convert file (uploaded image) to base64
-      reader.readAsDataURL(file); 
-    });
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
@@ -112,14 +119,16 @@ export const Account = () => {
       return;
     }
 
-    imgToBlob(file).then((blob) => {
-      setUserProfile(blob);
-      console.log(blob);
-    })
-    .catch((error) => {
-      console.error("Error uploading image:", error);
-      toast.error("Failed to upload image. Please try again.");
-    })
+    // Store the file for later upload
+    setProfileFile(file);
+
+    // Preview Image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUserProfile(reader.result);
+    };
+    
+    reader.readAsDataURL(file);
   };
 
   const handleSave = async (e) => {
@@ -132,29 +141,36 @@ export const Account = () => {
     const userId = user?.user_id || getUserId();
     if (!userId) return;
 
+    // Prepares the data to be send to api
+    const formData = new FormData();
+    formData.append('name', editForm.name);
+    formData.append('contact_no', editForm.contact_no);
+
+    // Add the profile image file if a new one was selected
+    if (profileFile) {
+      formData.append('profile_img', profileFile);
+    }
+
     try {
       // Update the user profile
       const response = await fetch(`http://localhost:5000/api/user/update/${userId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: editForm.name,
-          contact_no: editForm.contact_no,
-          profile_img: userProfile,
-        })
+        body: formData
       });
 
       const data = await response.json();
-      console.log(data);
-      toast.success(data.message);
-      setUser({...user, name: data.name, contact_no: data.contact_no}) // Update user context
-      setIsEditing(false);
+    
+      if (response.ok) {
+        toast.success(data.message);
+        setUser({...user, name: data.name, contact_no: data.contact_no});
+        setIsEditing(false);
+        setProfileFile(null);
+      } else {
+        toast.error(data.error || "Failed to update profile");
+      }
     } catch (error) {
       console.error("Error updating user profile:", error);
       toast.error("Failed to update profile. Please try again.");
-      return;
     }
   }
 
@@ -174,12 +190,11 @@ export const Account = () => {
           <div className="position-relative">
             <img
               className="rounded-circle"
-              src={
-                userProfile.startsWith("data:image/") ? userProfile : userImg
-              }
+              src={userProfile || defaultProfile}
               width="150"
               height="150"
               style={{ objectFit: "cover", marginLeft: "30px" }}
+              alt="User profile"
             />
             {isEditing && (
               <label
@@ -198,6 +213,7 @@ export const Account = () => {
                   width="20"
                   height="20"
                   style={{ objectFit: "cover" }}
+                  alt="Camera icon"
                 />
                 <input
                   type="file"
@@ -254,6 +270,7 @@ export const Account = () => {
                 width="30"
                 height="30"
                 style={{ objectFit: "cover" }}
+                alt="Edit icon"
               />
             </button>
           ) : (
@@ -287,7 +304,7 @@ export const Account = () => {
           className="d-flex align-items-center"
           style={{ marginLeft: "40px" }}
         >
-          <img src={icon.globe} width="80" height="80" />
+          <img src={icon.globe} width="80" height="80" alt="Globe icon" />
           <h3 className="fw-bold">Region: Metro Manila</h3>
         </MDBCol>
 
@@ -303,6 +320,7 @@ export const Account = () => {
                 width="40"
                 height="40"
                 style={{ objectFit: "cover" }}
+                alt="Arrow right icon"
               />
             </button>
           </div>
@@ -315,6 +333,7 @@ export const Account = () => {
                 width="40"
                 height="40"
                 style={{ objectFit: "cover" }}
+                alt="Arrow right icon"
               />
             </button>
           </div>
@@ -327,6 +346,7 @@ export const Account = () => {
                 width="40"
                 height="40"
                 style={{ objectFit: "cover" }}
+                alt="Arrow right icon"
               />
             </button>
           </div>
@@ -339,6 +359,7 @@ export const Account = () => {
                 width="40"
                 height="40"
                 style={{ objectFit: "cover" }}
+                alt="Arrow right icon"
               />
             </button>
           </div>
