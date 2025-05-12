@@ -30,6 +30,7 @@ import { Dashboard } from "./pages/Admin/Dashboard/Dashboard";
 import { SidebarProvider } from "./contexts/SideBarContext";
 import { AdminNews } from "./pages/Admin/News/AdminNews";
 import { RiderApplicants } from "./pages/Admin/Applications/RiderApplicants";
+import { Users } from "./pages/Admin/Users/Users";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
 export const UserContext = createContext(null);
@@ -160,7 +161,8 @@ function App() {
                       path="/BookingComplete"
                       element={<BookingComplete />}
                     />
-                    <Route path="/Dashboard" element={<Dashboard />} />
+                    <Route path="/admin/dashboard" element={<Dashboard />} />
+                    <Route path="/admin/users" element={<Users />} />
                     <Route path="/admin/news" element={<AdminNews />} />
                     <Route path="/admin/applications/rider-applicants" element={<RiderApplicants />} />
                   </Routes>

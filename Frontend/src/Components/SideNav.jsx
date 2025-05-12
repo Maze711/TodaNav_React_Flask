@@ -29,12 +29,12 @@ export const SideNav = () => {
     {
       icon: activeIndex === 0 ? dashDarkhIco : dashIco,
       label: "Dashboard",
-      route: "/dashboard",
+      route: "/admin/dashboard",
     },
     {
       icon: activeIndex === 1 ? userDarkIco : userIco,
       label: "Users",
-      route: "/users",
+      route: "/admin/users",
     },
     {
       icon: activeIndex === 2 ? newsDarkIco : newsIco,
