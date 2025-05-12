@@ -125,6 +125,8 @@ export const RiderApplicants = () => {
   const { isDark } = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("ALL");
+  const [showNewApplicants, setShowNewApplicants] = useState(true);
+  const [showAcceptedRiders, setShowAcceptedRiders] = useState(true);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -217,42 +219,81 @@ export const RiderApplicants = () => {
           </PieChart>
 
           <h3>New Applicants</h3>
-          <MDBRow>
-            {filteredApplicants.length > 0 ? (
-              filteredApplicants.map((applicant) => (
-                <MDBCol
-                  key={applicant.id}
-                  size="12"
-                  md="6"
-                  className="mb-3 d-flex"
-                >
-                  <div
-                    style={{
-                      border: `1px solid ${isDark ? "#fff" : "#ccc"}`,
-                      borderRadius: "8px",
-                      padding: "1rem",
-                      backgroundColor: isDark ? "#333" : "#f9f9f9",
-                      width: "100%",
-                    }}
-                  >
-                    <p style={{ marginBottom: 8 }}>
-                      <strong>Name:</strong> {applicant.name}
-                    </p>
-                    <p style={{ marginBottom: 8 }}>
-                      <strong>Plate No.:</strong> {applicant.plateNumber}
-                    </p>
-                    <p style={{ marginBottom: 0 }}>
-                      <strong>Phone No.:</strong> {applicant.phone}
-                    </p>
-                  </div>
-                </MDBCol>
-              ))
-            ) : (
-              <p>No applicants found.</p>
+          <div
+            style={{
+              border: `1px solid ${isDark ? "#fff" : "#ccc"}`,
+              borderRadius: "8px",
+              padding: "1rem",
+              backgroundColor: isDark ? "#333" : "#f9f9f9",
+              marginBottom: 20,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: 12,
+              }}
+            >
+              <button
+                onClick={() => setShowNewApplicants(!showNewApplicants)}
+                style={{
+                  backgroundColor: isDark ? "#444" : "#ddd",
+                  border: "none",
+                  color: isDark ? "#fff" : "#000",
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  cursor: "pointer",
+                  padding: "6px 12px",
+                  borderRadius: 4,
+                  outline: "none",
+                }}
+                aria-expanded={showNewApplicants}
+                aria-controls="new-applicants-container"
+              >
+                {showNewApplicants ? "Hide" : "Show"}
+              </button>
+            </div>
+            {showNewApplicants && (
+              <MDBRow id="new-applicants-container">
+                {filteredApplicants.length > 0 ? (
+                  filteredApplicants.map((applicant) => (
+                    <MDBCol
+                      key={applicant.id}
+                      size="12"
+                      md="6"
+                      className="mb-3 d-flex"
+                    >
+                      <div
+                        style={{
+                          border: `1px solid ${isDark ? "#fff" : "#ccc"}`,
+                          borderRadius: "8px",
+                          padding: "1rem",
+                          backgroundColor: isDark ? "#333" : "#f9f9f9",
+                          width: "100%",
+                        }}
+                      >
+                        <p style={{ marginBottom: 8 }}>
+                          <strong>Name:</strong> {applicant.name}
+                        </p>
+                        <p style={{ marginBottom: 8 }}>
+                          <strong>Plate No.:</strong> {applicant.plateNumber}
+                        </p>
+                        <p style={{ marginBottom: 0 }}>
+                          <strong>Phone No.:</strong> {applicant.phone}
+                        </p>
+                      </div>
+                    </MDBCol>
+                  ))
+                ) : (
+                  <p>No applicants found.</p>
+                )}
+              </MDBRow>
             )}
-          </MDBRow>
+          </div>
 
           <h3>Accepted Riders</h3>
+
           <div style={{ marginBottom: 20 }}>
             {filterOptions.map(({ label, color }) => (
               <button
@@ -278,68 +319,111 @@ export const RiderApplicants = () => {
               </button>
             ))}
           </div>
-          <MDBRow>
-            {filteredTricycles.length > 0 ? (
-              filteredTricycles.map((t, index) => (
-                <MDBCol key={index} size="12" md="6" className="mb-3 d-flex">
-                  <div
-                    style={{
-                      border: `1px solid ${isDark ? "#fff" : "#ccc"}`,
-                      borderRadius: "8px",
-                      padding: "1rem",
-                      backgroundColor: isDark ? "#333" : "#f9f9f9",
-                      width: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <p
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: 12,
-                      }}
+          <div
+            style={{
+              border: `1px solid ${isDark ? "#fff" : "#ccc"}`,
+              borderRadius: "8px",
+              padding: "1rem",
+              backgroundColor: isDark ? "#333" : "#f9f9f9",
+              marginBottom: 20,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: 12,
+              }}
+            >
+              <button
+                onClick={() => setShowAcceptedRiders(!showAcceptedRiders)}
+                style={{
+                  backgroundColor: isDark ? "#444" : "#ddd",
+                  border: "none",
+                  color: isDark ? "#fff" : "#000",
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  cursor: "pointer",
+                  padding: "6px 12px",
+                  borderRadius: 4,
+                  outline: "none",
+                }}
+                aria-expanded={showAcceptedRiders}
+                aria-controls="accepted-riders-container"
+              >
+                {showAcceptedRiders ? "Hide" : "Show"}
+              </button>
+            </div>
+            {showAcceptedRiders && (
+              <MDBRow id="accepted-riders-container">
+                {filteredTricycles.length > 0 ? (
+                  filteredTricycles.map((t, index) => (
+                    <MDBCol
+                      key={index}
+                      size="12"
+                      md="6"
+                      className="mb-3 d-flex"
                     >
-                      <img
-                        src={isDark ? userIconWhite : userIcon}
-                        alt="User Icon"
+                      <div
                         style={{
-                          width: 56,
-                          height: 56,
-                          marginRight: 16,
-                          borderRadius: "50%",
-                        }}
-                      />
-                      <strong>Rider's Name:</strong>&nbsp;{t.riderName}
-                    </p>
-                    <p style={{ marginBottom: 8 }}>
-                      <strong>Plate No.:</strong> {t.plateNumber}
-                    </p>
-                    <p style={{ marginBottom: 8 }}>
-                      <strong>Phone No.:</strong> {t.phone}
-                    </p>
-                    <p style={{ marginBottom: 8 }}>
-                      <strong>Status:</strong>{" "}
-                      <span
-                        style={{
-                          color: getStatusColor(t.status),
-                          fontWeight: "bold",
+                          border: `1px solid ${isDark ? "#fff" : "#ccc"}`,
+                          borderRadius: "8px",
+                          padding: "1rem",
+                          backgroundColor: isDark ? "#333" : "#f9f9f9",
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
-                        {t.status}
-                      </span>
-                    </p>
-                    <p style={{ marginBottom: 0 }}>
-                      <strong>Passengers:</strong> {t.passengers}/
-                      {t.maxPassengers} Passengers
-                    </p>
-                  </div>
-                </MDBCol>
-              ))
-            ) : (
-              <p>No accepted riders found.</p>
+                        <p
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginBottom: 12,
+                          }}
+                        >
+                          <img
+                            src={isDark ? userIconWhite : userIcon}
+                            alt="User Icon"
+                            style={{
+                              width: 56,
+                              height: 56,
+                              marginRight: 16,
+                              borderRadius: "50%",
+                            }}
+                          />
+                          <strong>Rider's Name:</strong>&nbsp;{t.riderName}
+                        </p>
+                        <p style={{ marginBottom: 8 }}>
+                          <strong>Plate No.:</strong> {t.plateNumber}
+                        </p>
+                        <p style={{ marginBottom: 8 }}>
+                          <strong>Phone No.:</strong> {t.phone}
+                        </p>
+                        <p style={{ marginBottom: 8 }}>
+                          <strong>Status:</strong>{" "}
+                          <span
+                            style={{
+                              color: getStatusColor(t.status),
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {t.status}
+                          </span>
+                        </p>
+                        <p style={{ marginBottom: 0 }}>
+                          <strong>Passengers:</strong> {t.passengers}/
+                          {t.maxPassengers} Passengers
+                        </p>
+                      </div>
+                    </MDBCol>
+                  ))
+                ) : (
+                  <p>No accepted riders found.</p>
+                )}
+              </MDBRow>
             )}
-          </MDBRow>
+          </div>
         </MDBContainer>
       </div>
     </div>
