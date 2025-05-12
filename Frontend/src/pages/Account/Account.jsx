@@ -1,6 +1,6 @@
 import { MDBContainer, MDBRow, MDBCol, MDBInput } from "mdb-react-ui-kit";
 import { BottomNav } from "../../Components/BottomNav";
-import defaultProfile from "../../assets/img/default_profile.jpg"
+import defaultProfile from "../../assets/img/default_profile.jpg";
 
 // Light Mode Icons
 import editIcon from "../../assets/ico/edit_light_ico.svg";
@@ -37,7 +37,8 @@ export const Account = () => {
   const { isDark } = useTheme();
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-  const [userProfile, setUserProfile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState(null);
+  const [originalProfilePreview, setOriginalProfilePreview] = useState(null);
   const [profileFile, setProfileFile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -46,36 +47,42 @@ export const Account = () => {
   });
 
   useEffect(() => {
-    const userId = user?.user_id || getUserId();
-    if (!userId) return;
-    
-    // Fetch user data
-    fetch(`http://localhost:5000/api/user/by_userid/${userId}`)
-      .then((res) => res.json())
-      .then((data) => {
+    const getUserData = async () => {
+      try {
+        const userId = await (user?.user_id || getUserId());
+        if (!userId) throw new Error("User not found!");
+
+        // Fetch users details & profile image in parallel
+        const [userResponse, imageResponse] = await Promise.all([
+          fetch(`http://localhost:5000/api/user/by_userid/${userId}`),
+          fetch(`http://localhost:5000/api/user/profile_image/${userId}`),
+        ]);
+
+        if (!userResponse.ok) throw new Error("Failed to fetch user data");
+
+        const user_data = await userResponse.json();
+        const { name, contact_no } = user_data;
+
         setEditForm({
-          name: data.name || "",
-          contact_no: data.contact_no || "",
+          name: name || "",
+          contact_no: contact_no || "",
         });
-        
-        // Also fetch the user's profile image if it exists
-        fetch(`http://localhost:5000/api/user/profile_image/${userId}`)
-          .then(response => {
-            if (response.ok) {
-              return response.blob();
-            }
-            throw new Error('Failed to fetch profile image');
-          })
-          .then(imageBlob => {
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setEditForm({...editForm, })
-            setUserProfile(imageUrl);
-          })
-          .catch(error => {
-            console.error("Error fetching profile image:", error);
-            setUserProfile(null);
-          });
-      });
+
+        // set the profile states, only if the user has image
+        if (imageResponse.ok) {
+          const imageBlob = await imageResponse.blob();
+          const imageUrl = URL.createObjectURL(imageBlob); // Converts image to url
+
+          setOriginalProfilePreview(imageUrl);
+          setProfilePreview(imageUrl);
+        }
+      } catch (error) {
+        console.log("getUserData Error:", error);
+        toast.error(error.message || "An error occurred");
+      }
+    };
+
+    getUserData();
   }, [user]);
 
   const icon = {
@@ -92,8 +99,10 @@ export const Account = () => {
       name: user.name || "",
       contact_no: user.contact_no || "",
     });
-    setProfileFile(null);
 
+    // Reset the Profile Preview
+    setProfilePreview(originalProfilePreview); 
+    setProfileFile(null);
   };
 
   const handleLogout = () => {
@@ -101,7 +110,7 @@ export const Account = () => {
     if (!isLoggedOut) return;
 
     // Clears any user-related data
-    localStorage.removeItem("user"); 
+    localStorage.removeItem("user");
     toast.success("Logged out successfully!");
 
     // Redirect back to login page
@@ -125,10 +134,42 @@ export const Account = () => {
     // Preview Image
     const reader = new FileReader();
     reader.onloadend = () => {
-      setUserProfile(reader.result);
+      setProfilePreview(reader.result);
     };
-    
+
     reader.readAsDataURL(file);
+  };
+
+  // Resize image before upload
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      // Creates and set image in memory
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+
+      // Processes the image compression
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const maxSize = 512;
+        const scale = Math.min(maxSize / img.width, maxSize / img.height);
+
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Converts compressed/scaled image into blob object
+        canvas.toBlob(
+          (blob) => {
+            resolve(new File([blob], file.name, { type: file.type }));
+          },
+          file.type,
+          0.8
+        );
+      };
+    });
   };
 
   const handleSave = async (e) => {
@@ -143,26 +184,35 @@ export const Account = () => {
 
     // Prepares the data to be send to api
     const formData = new FormData();
-    formData.append('name', editForm.name);
-    formData.append('contact_no', editForm.contact_no);
+    formData.append("name", editForm.name);
+    formData.append("contact_no", editForm.contact_no);
 
     // Add the profile image file if a new one was selected
     if (profileFile) {
-      formData.append('profile_img', profileFile);
+      const compressedFile = await compressImage(profileFile);
+      formData.append("profile_img", compressedFile);
     }
 
     try {
       // Update the user profile
-      const response = await fetch(`http://localhost:5000/api/user/update/${userId}`, {
-        method: "PUT",
-        body: formData
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/user/update/${userId}`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
-    
+
       if (response.ok) {
         toast.success(data.message);
-        setUser({...user, name: data.name, contact_no: data.contact_no});
+        setUser({
+          ...user,
+          name: data.name,
+          contact_no: data.contact_no,
+          user_profile: data.user_profile,
+        });
         setIsEditing(false);
         setProfileFile(null);
       } else {
@@ -172,7 +222,7 @@ export const Account = () => {
       console.error("Error updating user profile:", error);
       toast.error("Failed to update profile. Please try again.");
     }
-  }
+  };
 
   return (
     <MDBContainer>
@@ -190,7 +240,7 @@ export const Account = () => {
           <div className="position-relative">
             <img
               className="rounded-circle"
-              src={userProfile || defaultProfile}
+              src={profilePreview || defaultProfile}
               width="150"
               height="150"
               style={{ objectFit: "cover", marginLeft: "30px" }}
@@ -240,7 +290,9 @@ export const Account = () => {
             )}
             <p className="m-0">{user ? user.email : ""}</p>
             {!isEditing ? (
-              <p className="m-0">{user ? user.contact_no || "No contact no.#" : "Loading..."}</p>
+              <p className="m-0">
+                {user ? user.contact_no || "No contact no.#" : "Loading..."}
+              </p>
             ) : (
               <MDBInput
                 type="tel"
