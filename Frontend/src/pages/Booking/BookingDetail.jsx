@@ -201,7 +201,7 @@ export const BookingDetail = () => {
           toSearch={toSearch}
           isDark={isDark}
           todaMarkers={nearbyTODAs}
-          userLocation={userLocation}
+          userLocation={userLocation}  // Pass userLocation to MapView
         />
       </div>
 

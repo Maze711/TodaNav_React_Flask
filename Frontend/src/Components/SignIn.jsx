@@ -3,11 +3,13 @@ import { MDBInput } from "mdb-react-ui-kit";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { ApiUrlContext, UserContext } from "../App";
+import { LocationContext } from "../contexts/LocationContext";
 
 export const SignIn = ({ setIsSignUp }) => {
   const navigate = useNavigate();
   const apiUrl = useContext(ApiUrlContext);
   const { setUser } = useContext(UserContext); // Access setUser from context
+  const { fetchUserLocation } = useContext(LocationContext); // Access fetchUserLocation from LocationContext
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -31,6 +33,9 @@ export const SignIn = ({ setIsSignUp }) => {
 
       // Store user details in context
       setUser(data.user);
+
+      // Fetch user location after successful login
+      fetchUserLocation();
 
       toast.success("Login successful!");
       navigate('/home');
