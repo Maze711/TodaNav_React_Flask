@@ -40,8 +40,12 @@ export const Home = () => {
     navigate("/Account");
   };
 
-  const routeToBooking = () => {
+  const routeToTodaList = () => {
     navigate("/TodaList");
+  };
+
+  const routeToBooking = () => {
+    navigate("/Booking");
   };
 
   const news_list = [
@@ -97,9 +101,13 @@ export const Home = () => {
           {user.role == "USER" && (
             <button
               className={`btn ${isDark && "bg-white"}`}
-              onClick={routeToBooking}
+              onClick={routeToTodaList}
             >
-              <img src={isDark ? tricycleWhiteIcon : tricycleIcon} height={50} width={50} />
+              <img
+                src={isDark ? tricycleWhiteIcon : tricycleIcon}
+                height={50}
+                width={50}
+              />
             </button>
           )}
 
