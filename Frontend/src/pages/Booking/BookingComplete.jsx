@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "../../ThemeContext";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import riderProfile from "../../assets/img/RiderProfile.jpg";
 import "leaflet/dist/leaflet.css";
 
@@ -10,9 +10,13 @@ const MAP_CENTER = [14.4167, 121.0333];
 export const BookingComplete = () => {
   const { isDark } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#c9d1d9" : "#000";
   const mainBorder = "#B26D18";
+
+  // Get rider info from location state
+  const riderInfo = location.state?.riderInfo || {};
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
@@ -100,7 +104,7 @@ export const BookingComplete = () => {
             marginBottom: "0.7rem",
           }}
         >
-          Kurt Dominic Pansib
+          {riderInfo.rider_name || "Rider Name"}
         </div>
         {/* Stars */}
         <div style={{ marginBottom: "1.2rem" }}>
