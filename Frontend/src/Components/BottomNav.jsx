@@ -25,7 +25,7 @@ export const BottomNav = () => {
   const { isDark } = useTheme();
   const { unread, clearUnread } = useContext(NotificationContext);
   const location = useLocation();
-  const { updateUserLocation } = useContext(LocationContext);
+  const { fetchUserLocation } = useContext(LocationContext);
 
   React.useEffect(() => {
     if (location.pathname === "/Notif") clearUnread();
@@ -42,8 +42,7 @@ export const BottomNav = () => {
   const textStyle = { color: isDark ? "black" : "inherit" };
 
   const handleLocateClick = () => {
-    const bayananCoords = [14.407797, 121.049972];
-    updateUserLocation(bayananCoords);
+    fetchUserLocation();
   };
 
   return (
