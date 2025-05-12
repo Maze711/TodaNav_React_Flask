@@ -16,6 +16,7 @@ export const AdminNews = () => {
       type: "ROAD ACCIDENT",
       content:
         "A trailer truck loaded with soft drink bottles overturns while approaching the South Luzon Expressway through Susana Heights exit in Muntinlupa City on Sunday (Dec. 13, 2020). A traffic enforcer said no was hurt in the road accident.  (PNA photo by Avito C. Dalan)",
+      timestamp: "April 30, 2025 10:00 AM",
     },
     {
       id: 2,
@@ -23,6 +24,7 @@ export const AdminNews = () => {
       type: "ROAD ACCIDENT",
       content:
         "A trailer truck loaded with soft drink bottles overturns while approaching the South Luzon Expressway through Susana Heights exit in Muntinlupa City on Sunday (Dec. 13, 2020). A traffic enforcer said no was hurt in the road accident.  (PNA photo by Avito C. Dalan)",
+      timestamp: "May 5, 2025 10:00 AM",
     },
   ]);
 
@@ -35,9 +37,22 @@ export const AdminNews = () => {
     image: "",
     type: "",
     body: "",
+    timestamp: "",
   });
 
-  const handleShow = () => setShowModal(true);
+  const handleShow = () => {
+    const now = new Date();
+    const formatted = now.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    setFormData((prev) => ({ ...prev, timestamp: formatted }));
+    setShowModal(true);
+  };
+
   const handleClose = () => {
     setShowModal(false);
     setFormData({
@@ -45,6 +60,7 @@ export const AdminNews = () => {
       image: "",
       type: "",
       body: "",
+      timestamp: "",
     });
   };
 
@@ -56,11 +72,17 @@ export const AdminNews = () => {
     }));
   };
 
-  // For now, just log the form data on submit and close modal
+  // Add new news item to the list on submit
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("New News Item:", formData);
-    // Here you can add logic to add the new news item to the list or send to backend
+    const newNews = {
+      id: newsList.length + 1,
+      img: formData.image || News1,
+      type: formData.type,
+      content: formData.body,
+      timestamp: formData.timestamp,
+    };
+    setNewsList((prev) => [newNews, ...prev]);
     handleClose();
   };
 
@@ -80,14 +102,18 @@ export const AdminNews = () => {
           Add News
         </Button>
 
-        <div className="d-flex overflow-auto px-1" style={{ gap: "20px" }}>
+        <div
+          className="d-flex flex-wrap px-1"
+          style={{ gap: "20px", justifyContent: "start" }}
+        >
           {newsList.map((news) => (
             <div
               key={news.id}
               className="p-2"
               style={{
-                flex: "0 0 auto",
-                maxWidth: "400px",
+                flex: "0 0 calc(50% - 20px)",
+                maxWidth: "calc(50% - 20px)",
+                boxSizing: "border-box",
               }}
             >
               <img
@@ -96,9 +122,26 @@ export const AdminNews = () => {
                 alt={`News ${news.id}`}
                 style={{ objectFit: "cover", height: "180px" }}
               />
-              <p className="mt-2 small" style={{ textAlign: "justify" }}>
+              <p className="mt-2 small text-muted">Uploaded: {news.timestamp}</p>
+              <p className="mt-1 small" style={{ textAlign: "justify" }}>
                 <strong>{news.type}:</strong> {news.content}
               </p>
+              <div className="d-flex gap-2 mt-2">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => console.log(`Edit news id: ${news.id}`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => console.log(`Delete news id: ${news.id}`)}
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           ))}
         </div>
