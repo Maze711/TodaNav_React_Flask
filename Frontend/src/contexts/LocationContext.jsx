@@ -1,4 +1,5 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { UserContext } from "../App";
 
 export const muntinlupaLocations = () => ({
   barangays: {
@@ -107,7 +108,6 @@ export const calculateFare = (dist) => {
   return Math.round(baseFare + dist * perKm);
 };
 
-// TODA locations data
 export const todaLocations = [
   {
     name: "BBTODAI (Bayanan Baywalk Tricycle Operators and Drivers Association, Inc.)",
@@ -121,9 +121,12 @@ export const todaLocations = [
   },
 ];
 
-// Helper function to find nearby TODAs within a certain radius (e.g., 5 km)
-export const findNearbyTODA = (userLat, userLon, radiusKm = 5) => {
-  return todaLocations.filter((toda) => {
+export const findNearbyTODA = (userLat, userLon, radiusKm = 10) => {
+  if (userLat == null || userLon == null) {
+    // If user location is not available, return all TODA locations
+    return todaLocations;
+  }
+  const nearby = todaLocations.filter((toda) => {
     const dist = calculateDistance(
       userLat,
       userLon,
@@ -132,20 +135,20 @@ export const findNearbyTODA = (userLat, userLon, radiusKm = 5) => {
     );
     return dist <= radiusKm;
   });
+  // If no nearby TODAs found, fallback to all TODAs
+  return nearby.length > 0 ? nearby : todaLocations;
 };
 
-// LocationContext to provide user location and updater
 export const LocationContext = createContext();
 
 export const LocationProvider = ({ children }) => {
-  const [userLocation, setUserLocation] = useState([14.407797, 121.049972]); // Default to Bayanan
+  const { user } = useContext(UserContext);
+  const [userLocation, setUserLocation] = useState(null); // Initialize as null
 
-  // Function to update user location (simulate real-time)
   const updateUserLocation = (newLocation) => {
     setUserLocation(newLocation);
   };
 
-  // New function to fetch user's exact location using browser Geolocation API
   const fetchUserLocation = () => {
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported by this browser.");
@@ -163,6 +166,12 @@ export const LocationProvider = ({ children }) => {
       { enableHighAccuracy: true }
     );
   };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserLocation();
+    }
+  }, [user]);
 
   return (
     <LocationContext.Provider

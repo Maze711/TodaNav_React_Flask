@@ -12,7 +12,7 @@ import arrowUpIcon from "../../assets/ico/up-arrows.png";
 import { io } from "socket.io-client";
 import { UserContext } from "../../App";
 import { ToggleChat } from "../../Components/ToggleChat";
-import { muntinlupaLocations, calculateDistance, calculateFare, LocationContext, findNearbyTODA } from "../../contexts/LocationContext.jsx";
+import { muntinlupaLocations, calculateDistance, calculateFare, LocationContext, todaLocations, findNearbyTODA } from "../../contexts/LocationContext.jsx";
 
 const socket = io("http://127.0.0.1:5000");
 
