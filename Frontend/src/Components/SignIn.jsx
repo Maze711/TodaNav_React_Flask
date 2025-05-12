@@ -40,7 +40,7 @@ export const SignIn = ({ setIsSignUp }) => {
       toast.success("Login successful!");
 
       // Route the user based on role priviledge
-      navigate(data.user.role == "ADMIN" ? '/dashboard' : '/home');
+      navigate(data.user.role == "ADMIN" ? '/admin/dashboard' : '/home');
     } catch (error) {
       toast.dismiss();
       toast.error(error.message || "Invalid email or password");
