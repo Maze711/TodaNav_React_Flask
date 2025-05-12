@@ -12,7 +12,14 @@ import arrowUpIcon from "../../assets/ico/up-arrows.png";
 import { io } from "socket.io-client";
 import { UserContext } from "../../App";
 import { ToggleChat } from "../../Components/ToggleChat";
-import { muntinlupaLocations, calculateDistance, calculateFare, LocationContext, todaLocations, findNearbyTODA } from "../../contexts/LocationContext.jsx";
+import {
+  muntinlupaLocations,
+  calculateDistance,
+  calculateFare,
+  LocationContext,
+  todaLocations,
+  findNearbyTODA,
+} from "../../contexts/LocationContext.jsx";
 
 const socket = io("http://127.0.0.1:5000");
 
@@ -93,6 +100,19 @@ export const BookingDetail = () => {
         rider_name: data.rider_name,
         user_id: data.user_id,
       }));
+    });
+
+    // Listen for accept_booking event to show chat when rider accepts booking in Notif page
+    socket.on("accept_booking", (data) => {
+      if (data.user_id === user?.user_id) {
+        setShowChat(true);
+        setChatProps((prev) => ({
+          ...prev,
+          bookingId: data.booking_id,
+          userName: user?.name || "User",
+          riderName: data.rider_name || prev.riderName,
+        }));
+      }
     });
 
     return () => {
@@ -184,7 +204,14 @@ export const BookingDetail = () => {
       });
     }
     // Navigate to BookingComplete and pass rider info via state
-    navigate("/BookingComplete", { state: { riderInfo: { rider_name: tripDetails?.rider_name, user_id: tripDetails?.user_id } } });
+    navigate("/BookingComplete", {
+      state: {
+        riderInfo: {
+          rider_name: tripDetails?.rider_name,
+          user_id: tripDetails?.user_id,
+        },
+      },
+    });
   };
 
   return (
@@ -209,7 +236,7 @@ export const BookingDetail = () => {
           toSearch={toSearch}
           isDark={isDark}
           todaMarkers={nearbyTODAs}
-          userLocation={userLocation}  // Pass userLocation to MapView
+          userLocation={userLocation} // Pass userLocation to MapView
         />
       </div>
 
@@ -238,7 +265,12 @@ export const BookingDetail = () => {
               placeholder="From (e.g., Bayanan)"
               locations={muntinlupaLocations()}
               onSelect={(location) =>
-                handleLocationSelect(location, setFromSearch, setFromCoords, "from_location")
+                handleLocationSelect(
+                  location,
+                  setFromSearch,
+                  setFromCoords,
+                  "from_location"
+                )
               }
               isDark={isDark}
               textColor={textColor}
@@ -256,7 +288,12 @@ export const BookingDetail = () => {
               placeholder="To (e.g., Alabang)"
               locations={muntinlupaLocations()}
               onSelect={(location) =>
-                handleLocationSelect(location, setToSearch, setToCoords, "to_location")
+                handleLocationSelect(
+                  location,
+                  setToSearch,
+                  setToCoords,
+                  "to_location"
+                )
               }
               isDark={isDark}
               textColor={textColor}
@@ -304,8 +341,12 @@ export const BookingDetail = () => {
             transition: "background-color 0.3s ease",
             zIndex: 2,
           }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = mainBorder}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = containerBg}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = mainBorder)
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = containerBg)
+          }
           onClick={() => setShowTripDetails((prev) => !prev)}
         >
           <img
@@ -362,7 +403,8 @@ export const BookingDetail = () => {
                     {toda.location}
                   </p>
                   <p style={{ fontSize: "0.8rem", fontStyle: "italic" }}>
-                    Coordinates: {toda.coordinates[0].toFixed(6)}°, {toda.coordinates[1].toFixed(6)}°
+                    Coordinates: {toda.coordinates[0].toFixed(6)}°,{" "}
+                    {toda.coordinates[1].toFixed(6)}°
                   </p>
                   {distMeters !== null && (
                     <p style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
@@ -416,7 +458,8 @@ export const BookingDetail = () => {
                 Booking ID: {tripDetails?.booking_id || "—"}
               </p>
               <p className="mb-0" style={{ color: textColor }}>
-                From: {tripDetails?.from_location || fromSearch || "—"} To: {tripDetails?.to_location || toSearch || "—"}
+                From: {tripDetails?.from_location || fromSearch || "—"} To:{" "}
+                {tripDetails?.to_location || toSearch || "—"}
               </p>
             </div>
             <div className="text-end">
@@ -431,8 +474,8 @@ export const BookingDetail = () => {
         )}
 
         {/* Book Ride / Ride Done button */}
-        {showTripDetails && (
-          !rideDone ? (
+        {showTripDetails &&
+          (!rideDone ? (
             <button
               className="btn btn-success w-100"
               style={{ backgroundColor: mainBorder, border: "none" }}
@@ -449,8 +492,7 @@ export const BookingDetail = () => {
             >
               Ride Done
             </button>
-          )
-        )}
+          ))}
       </div>
 
       {/* Chat Component */}

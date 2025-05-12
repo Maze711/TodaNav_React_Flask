@@ -40,9 +40,37 @@ def handle_disconnect():
     role = connected_users.pop(user_id, None)
     logger.info(f"User disconnected: {user_id}, Role: {role}")  # Log disconnections
 
+from models.models import db, Message
+from datetime import datetime
+
 @socketio.on('message')
 def handle_message(data):
     logger.info(f"Message received: {data}")
+
+    # Save message to database
+    try:
+        sender_id = data.get('user_id') or data.get('sender_id') or ''
+        receiver_id = data.get('rider_id') or data.get('receiver_id') or ''
+        booking_id = data.get('booking_id') or ''
+        content = data.get('content') or ''
+        timestamp = datetime.utcnow()
+
+        if sender_id and booking_id and content:
+            message = Message(
+                sender_id=sender_id,
+                receiver_id=receiver_id if receiver_id else None,
+                booking_id=booking_id,
+                content=content,
+                timestamp=timestamp
+            )
+            db.session.add(message)
+            db.session.commit()
+            logger.info(f"Message saved to DB: {message}")
+        else:
+            logger.warning("Message missing required fields, not saved.")
+    except Exception as e:
+        logger.error(f"Error saving message to DB: {e}")
+
     emit('message', data, broadcast=True)
 
 @socketio.on('create_booking')
@@ -89,15 +117,39 @@ def handle_accept_booking(data):
         'user_id': user_id,
     }, broadcast=True)
 
+from sqlalchemy import text
+
 @socketio.on('ride_done')
 def handle_ride_done(data):
     """
     Rider marks ride as done. Notify the booking creator.
+    Also create a new table named after booking_id to store messages.
     """
     booking_id = data.get('booking_id')
     user_id = data.get('user_id')
 
     logger.info(f"Ride done for booking: {booking_id} by user: {user_id}")
+
+    # Create table named after booking_id if not exists
+    if booking_id:
+        table_name = f"`{booking_id}`"
+        create_table_sql = f"""
+        CREATE TABLE IF NOT EXISTS todanav_messages.{table_name} (
+            ID INT AUTO_INCREMENT PRIMARY KEY,
+            User_ID VARCHAR(50) NOT NULL,
+            Rider_ID VARCHAR(50),
+            Messages TEXT NOT NULL,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            Booking_Id VARCHAR(50) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        """
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text(create_table_sql))
+                logger.info(f"Created table {table_name} in todanav_messages database.")
+        except Exception as e:
+            logger.error(f"Error creating table {table_name}: {e}")
+
     emit('ride_done', {
         'booking_id': booking_id,
         'user_id': user_id,

@@ -41,6 +41,9 @@ export const ToggleChat = ({
         user: userName,
         content: input,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        booking_id: bookingId,
+        user_id: user?.user_id,
+        rider_id: userRole?.toLowerCase() === "rider" ? user?.user_id : null,
       };
       socket.emit("message", msg);
       setInput("");

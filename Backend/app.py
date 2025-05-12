@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.models import db 
 from config.socketio_config import socketio
@@ -17,6 +18,7 @@ except ImportError:
         "MYSQL_PASSWORD": "",
         "MYSQL_HOST": "localhost",
         "MYSQL_DB": "todanav_db",
+        "MYSQL_MESSAGES_DB": "todanav_messages"
     }
 
 if not isinstance(config, dict):
@@ -27,6 +29,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+mysqlconnector://{config['MYSQL_USER']}:{config['MYSQL_PASSWORD']}@{config['MYSQL_HOST']}/{config['MYSQL_DB']}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Create separate engine for messages database
+messages_db_uri = f"mysql+mysqlconnector://{config['MYSQL_USER']}:{config['MYSQL_PASSWORD']}@{config['MYSQL_HOST']}/{config['MYSQL_MESSAGES_DB']}"
+messages_engine = create_engine(messages_db_uri, echo=False)
 
 CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
 db.init_app(app)
