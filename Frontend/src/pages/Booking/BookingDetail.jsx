@@ -181,6 +181,12 @@ export const BookingDetail = () => {
       to_location: toSearch,
     }));
 
+    // Emit ride_done event here to create the table immediately after booking
+    socket.emit("ride_done", {
+      booking_id: bookingId,
+      user_id: user?.user_id,
+    });
+
     socket.emit("create_booking", {
       booking_id: bookingId,
       user_id: user?.user_id,
