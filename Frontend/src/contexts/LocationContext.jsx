@@ -145,9 +145,28 @@ export const LocationProvider = ({ children }) => {
     setUserLocation(newLocation);
   };
 
+  // New function to fetch user's exact location using browser Geolocation API
+  const fetchUserLocation = () => {
+    if (!navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation([latitude, longitude]);
+        console.log("User location updated:", latitude, longitude);
+      },
+      (error) => {
+        console.error("Error getting location:", error.message);
+      },
+      { enableHighAccuracy: true }
+    );
+  };
+
   return (
     <LocationContext.Provider
-      value={{ userLocation, updateUserLocation, findNearbyTODA }}
+      value={{ userLocation, updateUserLocation, findNearbyTODA, fetchUserLocation }}
     >
       {children}
     </LocationContext.Provider>

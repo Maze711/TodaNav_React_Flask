@@ -5,6 +5,7 @@ import {
   Polyline,
   Marker,
   Popup,
+  CircleMarker,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -18,6 +19,7 @@ export const MapView = ({
   isDark,
   routeProfile = "driving", // You can set this prop to "walking", "cycling", or "driving"
   todaMarkers = [], // New prop for TODA markers
+  userLocation, // New prop for user's exact location
 }) => {
   const [routeCoords, setRouteCoords] = useState([]);
 
@@ -86,6 +88,19 @@ export const MapView = ({
           </Popup>
         </Marker>
       ))}
+      {userLocation && (
+        <CircleMarker
+          center={userLocation}
+          radius={10}
+          pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.5 }}
+        >
+          <Popup>
+            Your Location
+            <br />
+            Lat: {userLocation[0]}, Lng: {userLocation[1]}
+          </Popup>
+        </CircleMarker>
+      )}
       {routeCoords.length > 0 && (
         <Polyline
           positions={routeCoords}
