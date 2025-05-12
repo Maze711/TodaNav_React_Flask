@@ -49,7 +49,7 @@ export const SideNav = () => {
     {
       icon: activeIndex === 4 ? appDarkIco : appIco,
       label: "Applications",
-      route: "/applications",
+      route: "/admin/applications/rider-applicants",
     },
     {
       icon: activeIndex === 5 ? notifDarkIco : notifIco,
