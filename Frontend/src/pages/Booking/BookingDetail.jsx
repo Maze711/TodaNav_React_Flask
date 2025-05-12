@@ -176,7 +176,15 @@ export const BookingDetail = () => {
   };
 
   const handleRideDone = () => {
-    navigate("/BookingComplete");
+    // Emit ride_done event with booking_id and user_id
+    if (tripDetails?.booking_id && user?.user_id) {
+      socket.emit("ride_done", {
+        booking_id: tripDetails.booking_id,
+        user_id: user.user_id,
+      });
+    }
+    // Navigate to BookingComplete and pass rider info via state
+    navigate("/BookingComplete", { state: { riderInfo: { rider_name: tripDetails?.rider_name, user_id: tripDetails?.user_id } } });
   };
 
   return (
