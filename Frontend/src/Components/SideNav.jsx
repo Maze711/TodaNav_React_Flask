@@ -37,26 +37,21 @@ export const SideNav = () => {
       route: "/users",
     },
     {
-      icon: activeIndex === 2 ? userDarkIco : userIco,
-      label: "Drivers",
-      route: "/drivers",
-    },
-    {
-      icon: activeIndex === 3 ? newsDarkIco : newsIco,
+      icon: activeIndex === 2 ? newsDarkIco : newsIco,
       label: "News",
       route: "/admin/news",
     },
     {
-      icon: activeIndex === 4 ? appDarkIco : appIco,
+      icon: activeIndex === 3 ? appDarkIco : appIco,
       label: "Applications",
       route: "/admin/applications/rider-applicants",
     },
     {
-      icon: activeIndex === 5 ? notifDarkIco : notifIco,
+      icon: activeIndex === 4 ? notifDarkIco : notifIco,
       label: "Notification",
       route: "/notifications",
     },
-    { icon: activeIndex === 6 ? logoutDarkIco : logoutIco, label: "Logout" },
+    { icon: activeIndex === 5 ? logoutDarkIco : logoutIco, label: "Logout" },
   ];
 
   const handleLogout = () => {
