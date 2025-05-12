@@ -36,16 +36,23 @@ export const ToggleChat = ({
   }, [messages]);
 
   const sendMessage = () => {
+    if (!bookingId) {
+      alert("Booking ID is not set yet. Please wait until booking is confirmed.");
+      return;
+    }
     if (input.trim() && socket) {
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      console.log(`Booking ID: ${bookingId}, User ID: ${user?.user_id}, Message: ${input}, Timestamp: ${timestamp}`);
       const msg = {
         user: userName,
         content: input,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: timestamp,
         booking_id: bookingId,
         user_id: user?.user_id,
         rider_id: userRole?.toLowerCase() === "rider" ? user?.user_id : null,
       };
       socket.emit("message", msg);
+      setMessages((prev) => [...prev, msg]); // Optimistically add message to UI
       setInput("");
     }
   };
@@ -133,7 +140,7 @@ export const ToggleChat = ({
           justifyContent: "space-between",
           alignItems: "center"
         }}>
-          Chat with Rider
+          Chat with Rider {bookingId && <span style={{ fontWeight: 'normal', fontSize: 14, marginLeft: 8 }}> (Booking ID: {bookingId})</span>}
           <button
             onClick={() => setOpen(false)}
             style={{

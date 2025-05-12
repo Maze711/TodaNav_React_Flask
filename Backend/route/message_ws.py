@@ -3,6 +3,9 @@ import os
 from flask import Blueprint, request
 from flask_socketio import emit, join_room
 from config.socketio_config import socketio
+from models.models import db, Message
+from datetime import datetime
+from sqlalchemy import text
 
 # Set up the logger
 log_file_path = os.path.join(os.path.dirname(__file__), "socketio.log")  # Log file in the same directory as this script
@@ -40,9 +43,6 @@ def handle_disconnect():
     role = connected_users.pop(user_id, None)
     logger.info(f"User disconnected: {user_id}, Role: {role}")  # Log disconnections
 
-from models.models import db, Message
-from datetime import datetime
-
 @socketio.on('message')
 def handle_message(data):
     logger.info(f"Message received: {data}")
@@ -50,15 +50,20 @@ def handle_message(data):
     # Save message to database
     try:
         sender_id = data.get('user_id') or data.get('sender_id') or ''
-        receiver_id = data.get('rider_id') or data.get('receiver_id') or ''
+        receiver_id = data.get('rider_id') if data.get('rider_id') is not None else data.get('receiver_id')
         booking_id = data.get('booking_id') or ''
         content = data.get('content') or ''
         timestamp = datetime.utcnow()
 
+        # Fix: receiver_id cannot be None, set to empty string if None
+        if receiver_id is None:
+            receiver_id = ''
+
         if sender_id and booking_id and content:
+            # Insert into static Message table
             message = Message(
                 sender_id=sender_id,
-                receiver_id=receiver_id if receiver_id else None,
+                receiver_id=receiver_id,
                 booking_id=booking_id,
                 content=content,
                 timestamp=timestamp
@@ -66,10 +71,33 @@ def handle_message(data):
             db.session.add(message)
             db.session.commit()
             logger.info(f"Message saved to DB: {message}")
+
+            # Insert into dynamic booking_id table if exists
+            table_name = f"`{booking_id}`"
+            insert_sql = f"""
+            INSERT INTO todanav_messages.{table_name} (User_ID, Rider_ID, Messages, Timestamp, Booking_ID)
+            VALUES (:user_id, :rider_id, :messages, :timestamp, :booking_id)
+            """
+            try:
+                with db.engine.connect() as conn:
+                    result = conn.execute(
+                        text(insert_sql),
+                        {
+                            "user_id": sender_id,
+                            "rider_id": receiver_id,
+                            "messages": content,
+                            "timestamp": timestamp,
+                            "booking_id": booking_id,
+                        },
+                    )
+                    logger.info(f"Message inserted into dynamic table {table_name}, rows affected: {result.rowcount}")
+            except Exception as e:
+                logger.error(f"Error inserting message into dynamic table {table_name}: {e}")
         else:
             logger.warning("Message missing required fields, not saved.")
     except Exception as e:
         logger.error(f"Error saving message to DB: {e}")
+        db.session.rollback()
 
     emit('message', data, broadcast=True)
 
@@ -140,7 +168,7 @@ def handle_ride_done(data):
             Rider_ID VARCHAR(50),
             Messages TEXT NOT NULL,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-            Booking_Id VARCHAR(50) NOT NULL
+            Booking_ID VARCHAR(50) NOT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """
         try:
