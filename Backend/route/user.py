@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, Response
 from models.models import db, User
-from base64 import b64decode
+from base64 import b64decode, b64encode
 
 user_bp = Blueprint('user', __name__)
 
@@ -31,64 +31,62 @@ def get_profile_image(user_id):
         user.user_profile,
         mimetype='image/jpeg', 
         headers={
-            'Content-Disposition': f'inline; filename=profile_{user_id}.jpg'
+            'Content-Disposition': f'inline; filename=profile_{user_id}.jpg',
         }
     )
-    
+
+MAX_IMAGE_SIZE = 2 * 1024 * 1024  # 2MB
+
 @user_bp.route('/api/user/update/<user_id>', methods=['PUT'])
 def update_user(user_id):
-    # Get the user from the database
     user = User.query.filter_by(user_id=user_id).first()
-    
     if not user:
         return jsonify({'error': 'User not found'}), 404
-    
-    # Check if the request is multipart/form-data or application/json
-    if request.content_type and request.content_type.startswith('multipart/form-data'):
-        # Handle form data with file upload
+
+    # Handle JSON or multipart data
+    if request.content_type.startswith('multipart/form-data'):
         data = request.form
-        
-        # Update text fields
-        if 'name' in data:
-            user.name = data['name']
-        if 'contact_no' in data:
-            user.contact_no = data['contact_no']
-        
-        # Check if profile image was uploaded
-        if 'profile_img' in request.files:
-            file = request.files['profile_img']
-            if file and file.filename:
-                # Read the file data directly into the user_profile field
-                user.user_profile = file.read()
+        profile_file = request.files.get('profile_img')
     else:
-        # Handle JSON data
-        data = request.get_json()
-        
-        # Update text fields
-        if data.get('name'):
-            user.name = data['name']
-        if 'contact_no' in data:
-            user.contact_no = data['contact_no']
-        
-        # Check if profile image was included as base64
-        if data.get('profile_img') and isinstance(data['profile_img'], str):
-            try:
-                # Split off the data URI prefix (e.g., "data:image/jpeg;base64,")
-                if ',' in data['profile_img']:
-                    user.user_profile = b64decode(data['profile_img'].split(',')[1])
-                else:
-                    user.user_profile = b64decode(data['profile_img'])
-            except Exception as e:
-                print(f"Error decoding base64 image: {e}")
-    
+        data = request.get_json() or {}
+        profile_file = None
+
+    # Update text fields
+    user.name = data.get('name', user.name)
+    user.contact_no = data.get('contact_no', user.contact_no)
+
+    # Handle image from file upload
+    if profile_file and profile_file.filename:
+        if profile_file.content_length > MAX_IMAGE_SIZE:
+            return jsonify({'error': 'Profile image exceeds 2MB limit'}), 400
+        user.user_profile = profile_file.read()
+
+    # Handle image from base64 (if JSON)
+    elif isinstance(data.get('profile_img'), str):
+        try:
+            img_data = data['profile_img'].split(',')[-1]
+            decoded_img = b64decode(img_data)
+            if len(decoded_img) > MAX_IMAGE_SIZE:
+                return jsonify({'error': 'Profile image exceeds 2MB limit'}), 400
+            user.user_profile = decoded_img
+        except Exception as e:
+            print(f"Error decoding base64 image: {e}")
+            return jsonify({'error': 'Invalid base64 image data'}), 400
     try:
         db.session.commit()
-        return jsonify({
-            'name': user.name, 
-            'contact_no': user.contact_no, 
-            'message': 'Profile updated successfully!'
-        }), 200
     except Exception as e:
         db.session.rollback()
         print(f"Database error: {e}")
         return jsonify({'error': f'Failed to update user: {str(e)}'}), 500
+
+    # Return updated data with image as base64
+    profile_image_base64 = None
+    if user.user_profile:
+        profile_image_base64 = f"data:image/jpeg;base64,{b64encode(user.user_profile).decode('utf-8')}"
+
+    return jsonify({
+        'name': user.name,
+        'contact_no': user.contact_no,
+        'user_profile': profile_image_base64,
+        'message': 'Profile updated successfully!'
+    }), 200
