@@ -23,7 +23,7 @@ import toast from "react-hot-toast";
 
 export const SideNav = () => {
   const { isOpen, toggleSidebar, activeIndex, setActiveIndex } = useSidebar();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const navItems = [
     {
@@ -99,11 +99,40 @@ export const SideNav = () => {
         {navItems.map((item, index) => {
           const isActive = activeIndex === index;
 
+          // For Logout item, render differently
+          if (item.label === "Logout") {
+            return (
+              <li
+                key={index}
+                className="d-flex align-items-center mb-2 gap-4 fw-bold"
+                onClick={handleLogout}
+                onMouseEnter={(e) => {
+                  if (!isActive)
+                    e.currentTarget.style.backgroundColor = "#495057";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) e.currentTarget.style.backgroundColor = "";
+                }}
+                style={{
+                  borderTopLeftRadius: "25px",
+                  borderBottomLeftRadius: "25px",
+                  padding: "15px 20px",
+                  transition: "background 0.3s, color 0.3s",
+                  backgroundColor: isActive ? "white" : "",
+                  color: isActive ? "#343a40" : "white",
+                  cursor: "pointer",
+                }}
+              >
+                <img src={item.icon} height={30} />
+                {item.label}
+              </li>
+            );
+          }
+
           return (
             <Link
               style={{ textDecoration: "none" }}
               to={item.route}
-              onClick={item.label === "Logout" ? handleLogout : undefined}
             >
               <li
                 className="d-flex align-items-center mb-2 gap-4 fw-bold"
