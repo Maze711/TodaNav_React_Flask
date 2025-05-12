@@ -29,6 +29,7 @@ import { LocationProvider } from "./contexts/LocationContext";
 import { Dashboard } from "./pages/Dashboard/Dashboard";
 import { SidebarProvider } from "./contexts/SideBarContext";
 import { AdminNews } from "./pages/Admin/News/AdminNews";
+import { RiderApplicants } from "./pages/Admin/Applications/RiderApplicants";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
 export const UserContext = createContext(null);
@@ -161,6 +162,7 @@ function App() {
                     />
                     <Route path="/Dashboard" element={<Dashboard />} />
                     <Route path="/admin/news" element={<AdminNews />} />
+                    <Route path="/admin/applications/rider-applicants" element={<RiderApplicants />} />
                   </Routes>
                 </Router>
               </SidebarProvider>
