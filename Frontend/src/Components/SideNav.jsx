@@ -44,7 +44,7 @@ export const SideNav = () => {
     {
       icon: activeIndex === 3 ? newsDarkIco : newsIco,
       label: "News",
-      route: "/news",
+      route: "/admin/news",
     },
     {
       icon: activeIndex === 4 ? appDarkIco : appIco,

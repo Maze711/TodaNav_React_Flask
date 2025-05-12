@@ -28,6 +28,7 @@ import { io } from "socket.io-client";
 import { LocationProvider } from "./contexts/LocationContext";
 import { Dashboard } from "./pages/Dashboard/Dashboard";
 import { SidebarProvider } from "./contexts/SideBarContext";
+import { AdminNews } from "./pages/Admin/News/AdminNews";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
 export const UserContext = createContext(null);
@@ -159,6 +160,7 @@ function App() {
                       element={<BookingComplete />}
                     />
                     <Route path="/Dashboard" element={<Dashboard />} />
+                    <Route path="/admin/news" element={<AdminNews />} />
                   </Routes>
                 </Router>
               </SidebarProvider>
