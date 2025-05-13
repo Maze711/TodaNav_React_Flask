@@ -58,7 +58,7 @@ export const ToggleChat = ({
         rider_id: userRole?.toLowerCase() === "rider" ? user?.user_id : null,
       };
       socket.emit("message", msg);
-      setMessages((prev) => [...prev, msg]); // Optimistically add message to UI
+      // Removed optimistic local add to prevent duplicate messages
       setInput("");
     }
   };
