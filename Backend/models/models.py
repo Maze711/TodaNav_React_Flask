@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
-from datetime import datetime
+from datetime import datetime, date
 
 db = SQLAlchemy()
 
@@ -24,3 +24,16 @@ class Message(db.Model):
     booking_id = db.Column(db.String(50), nullable=False)  # Added booking_id column
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class TripHistory(db.Model):
+    __tablename__ = 'trip_history'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(255), nullable=False)
+    rider_id = db.Column(db.String(255), nullable=False)
+    booking_id = db.Column(db.String(255), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    location_from = db.Column(db.String(255), nullable=False)
+    location_to = db.Column(db.String(255), nullable=False)

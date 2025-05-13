@@ -41,10 +41,12 @@ db.init_app(app)
 from route.register import register_bp
 from route.login import login_bp
 from route.user import user_bp
+from route.ride_history import ride_history_bp
 
 app.register_blueprint(register_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(ride_history_bp)
 app.register_blueprint(message_ws_bp)  # Existing websocket blueprint
 app.register_blueprint(message_api_bp)  # Register the new message API blueprint
 
