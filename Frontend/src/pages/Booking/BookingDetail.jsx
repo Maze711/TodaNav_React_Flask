@@ -265,7 +265,7 @@ export const BookingDetail = () => {
           fromSearch={fromSearch}
           toSearch={toSearch}
           isDark={isDark}
-          todaMarkers={nearbyTODAs}
+          todaMarkers={selectedToda ? [selectedToda] : []}
           userLocation={userLocation} // Pass userLocation to MapView
         />
       </div>
