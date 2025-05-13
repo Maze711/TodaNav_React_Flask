@@ -31,6 +31,7 @@ import { SidebarProvider } from "./contexts/SideBarContext";
 import { AdminNews } from "./pages/Admin/News/AdminNews";
 import { RiderApplicants } from "./pages/Admin/Applications/RiderApplicants";
 import { Users } from "./pages/Admin/Users/Users";
+import { SearchProvider } from "./contexts/SearchContext";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
 export const UserContext = createContext(null);
@@ -122,52 +123,54 @@ function App() {
         <UserContext.Provider value={{ user, setUser }}>
           <NotificationProvider>
             <LocationProvider>
-              <SidebarProvider>
-                <Router>
-                  <ThemeToggleButton />
-                  <Toaster
-                    position="top-center"
-                    toastOptions={{
-                      duration: 2000,
-                      style: {
-                        background: "#333",
-                        color: "#fff",
-                      },
-                      success: {
+              <SearchProvider>
+                <SidebarProvider>
+                  <Router>
+                    <ThemeToggleButton />
+                    <Toaster
+                      position="top-center"
+                      toastOptions={{
+                        duration: 2000,
                         style: {
-                          background: "#198754",
+                          background: "#333",
+                          color: "#fff",
                         },
-                      },
-                      error: {
-                        style: {
-                          background: "#dc3545",
+                        success: {
+                          style: {
+                            background: "#198754",
+                          },
                         },
-                      },
-                    }}
-                    reverseOrder={false}
-                  />
-                  <GlobalNotificationListener socket={socket} user={user} />
-                  <Routes>
-                    <Route path="/" element={<UserForm setUser={setUser} />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/payments" element={<PaymentMethods />} />
-                    <Route path="/Messages" element={<Messages />} />
-                    <Route path="/todaList" element={<TodaList />} />
-                    <Route path="/Account" element={<Account />} />
-                    <Route path="/Notif" element={<Notif />} />
-                    <Route path="/Booking" element={<BookingApp />} />
-                    <Route path="/BookingDetail" element={<BookingDetail />} />
-                    <Route
-                      path="/BookingComplete"
-                      element={<BookingComplete />}
+                        error: {
+                          style: {
+                            background: "#dc3545",
+                          },
+                        },
+                      }}
+                      reverseOrder={false}
                     />
-                    <Route path="/admin/dashboard" element={<Dashboard />} />
-                    <Route path="/admin/users" element={<Users />} />
-                    <Route path="/admin/news" element={<AdminNews />} />
-                    <Route path="/admin/applications/rider-applicants" element={<RiderApplicants />} />
-                  </Routes>
-                </Router>
-              </SidebarProvider>
+                    <GlobalNotificationListener socket={socket} user={user} />
+                    <Routes>
+                      <Route path="/" element={<UserForm setUser={setUser} />} />
+                      <Route path="/home" element={<Home />} />
+                      <Route path="/payments" element={<PaymentMethods />} />
+                      <Route path="/Messages" element={<Messages />} />
+                      <Route path="/todaList" element={<TodaList />} />
+                      <Route path="/Account" element={<Account />} />
+                      <Route path="/Notif" element={<Notif />} />
+                      <Route path="/Booking" element={<BookingApp />} />
+                      <Route path="/BookingDetail" element={<BookingDetail />} />
+                      <Route
+                        path="/BookingComplete"
+                        element={<BookingComplete />}
+                      />
+                      <Route path="/admin/dashboard" element={<Dashboard />} />
+                      <Route path="/admin/users" element={<Users />} />
+                      <Route path="/admin/news" element={<AdminNews />} />
+                      <Route path="/admin/applications/rider-applicants" element={<RiderApplicants />} />
+                    </Routes>
+                  </Router>
+                </SidebarProvider>
+              </SearchProvider>
             </LocationProvider>
           </NotificationProvider>
         </UserContext.Provider>
