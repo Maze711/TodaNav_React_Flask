@@ -3,6 +3,8 @@ import { BottomNav } from "../../Components/BottomNav";
 import tricycleIcon from "../../assets/ico/tricycle.png";
 import tricycleWhiteIcon from "../../assets/ico/tricycle-white.png";
 import userIcon from "../../assets/ico/user.png";
+import tripHistoryWhiteIcon from "../../assets/ico/trip-history-white.png";
+import tripHistoryBlackIcon from "../../assets/ico/trip-history-black.png";
 import News1 from "../../assets/img/News1.jpg";
 import News2 from "../../assets/img/BgforBooking.jpg";
 import { useTheme } from "../../ThemeContext";
@@ -46,6 +48,10 @@ export const Home = () => {
 
   const routeToBooking = () => {
     navigate("/Booking");
+  };
+
+  const routeToTripHistory = () => {
+    navigate("/TripHistory");
   };
 
   const news_list = [
@@ -116,6 +122,17 @@ export const Home = () => {
             onClick={routeToAccount}
           >
             <img src={userIcon} height={50} width={50} />
+          </button>
+          <button
+            className={`btn ${isDark && "bg-white"}`}
+            onClick={() => navigate("/TripHistory")}
+          >
+            <img
+              src={isDark ? tripHistoryWhiteIcon : tripHistoryBlackIcon}
+              height={50}
+              width={50}
+              alt="Trip History"
+            />
           </button>
         </MDBCol>
       </MDBRow>
