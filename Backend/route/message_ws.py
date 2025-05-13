@@ -170,6 +170,11 @@ def handle_accept_booking(data):
         'user_id': user_id,
     }, broadcast=True)
 
+    # Emit event to update booking status to ride done in BookingDetail.jsx
+    emit('booking_accepted_update', {
+        'booking_id': booking_id,
+    }, broadcast=True)
+
 from sqlalchemy import text
 
 @socketio.on('ride_done')

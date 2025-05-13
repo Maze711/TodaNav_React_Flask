@@ -115,9 +115,17 @@ export const BookingDetail = () => {
       }
     });
 
+    // Listen for booking_accepted_update event to update rideDone state
+    socket.on("booking_accepted_update", (data) => {
+      if (data.booking_id === tripDetails?.booking_id) {
+        setRideDone(true);
+      }
+    });
+
     return () => {
       socket.off("booking_confirmation");
       socket.off("booking_accepted");
+      socket.off("booking_accepted_update");
     };
   }, [tripDetails?.booking_id, user?.name]);
 
@@ -195,11 +203,25 @@ export const BookingDetail = () => {
       to_location: toSearch,
     });
 
-    setTimeout(() => {
-      setIsBooking(false);
-      setRideDone(true);
-    }, 1500);
+    // Do not reset isBooking here; keep it true until accept_booking event is received
+    // setTimeout(() => {
+    //   setIsBooking(false);
+    // }, 1500);
   };
+
+  // Listen for booking_accepted_update event to reset isBooking and set rideDone
+  useEffect(() => {
+    const handleBookingAcceptedUpdate = (data) => {
+      if (data.booking_id === tripDetails?.booking_id) {
+        setRideDone(true);
+        setIsBooking(false);
+      }
+    };
+    socket.on("booking_accepted_update", handleBookingAcceptedUpdate);
+    return () => {
+      socket.off("booking_accepted_update", handleBookingAcceptedUpdate);
+    };
+  }, [tripDetails?.booking_id]);
 
   const handleRideDone = () => {
     // Emit ride_done event with booking_id and user_id
@@ -480,25 +502,25 @@ export const BookingDetail = () => {
         )}
 
         {/* Book Ride / Ride Done button */}
-        {showTripDetails &&
-          (!rideDone ? (
-            <button
-              className="btn btn-success w-100"
-              style={{ backgroundColor: mainBorder, border: "none" }}
-              onClick={handleBookRide}
-              disabled={isBooking}
-            >
-              {isBooking ? "Booking..." : "Book Ride"}
-            </button>
-          ) : (
-            <button
-              className="btn btn-primary w-100"
-              style={{ backgroundColor: "#198754", border: "none" }}
-              onClick={handleRideDone}
-            >
-              Ride Done
-            </button>
-          ))}
+            {showTripDetails &&
+              (!rideDone ? (
+                <button
+                  className="btn btn-success w-100"
+                  style={{ backgroundColor: mainBorder, border: "none" }}
+                  onClick={handleBookRide}
+                  disabled={isBooking}
+                >
+                  {isBooking ? "Finding Rider..." : "Book Ride"}
+                </button>
+              ) : (
+                <button
+                  className="btn btn-primary w-100"
+                  style={{ backgroundColor: "#198754", border: "none" }}
+                  onClick={handleRideDone}
+                >
+                  Pay Now
+                </button>
+              ))}
       </div>
 
       {/* Chat Component */}
