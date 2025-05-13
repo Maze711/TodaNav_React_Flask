@@ -225,23 +225,58 @@ export const BookingDetail = () => {
     };
   }, [tripDetails?.booking_id]);
 
-  const handleRideDone = () => {
-    // Emit ride_done event with booking_id and user_id
-    if (tripDetails?.booking_id && user?.user_id) {
+  const handleRideDone = async () => {
+    try {
+      if (!tripDetails?.booking_id || !user?.user_id) {
+        alert("Missing booking or user information");
+        return;
+      }
+
+      // Prepare data for ride history
+      const rideHistoryData = {
+        user_id: user.user_id,
+        rider_id: tripDetails?.rider_name || "", // Assuming rider_name as rider_id, adjust if needed
+        booking_id: tripDetails.booking_id,
+        start_time: new Date().toISOString(), // Use current time or adjust as needed
+        end_time: new Date().toISOString(),   // Use current time or adjust as needed
+        date: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD
+        location_from: tripDetails?.from_location || "",
+        location_to: tripDetails?.to_location || "",
+      };
+
+      // Call backend API to save ride history
+      const response = await fetch("http://127.0.0.1:5000/api/ride_history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(rideHistoryData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert("Failed to save ride history: " + errorData.error);
+        return;
+      }
+
+      // Emit ride_done event with booking_id and user_id
       socket.emit("ride_done", {
         booking_id: tripDetails.booking_id,
         user_id: user.user_id,
       });
-    }
-    // Navigate to BookingComplete and pass rider info via state
-    navigate("/BookingComplete", {
-      state: {
-        riderInfo: {
-          rider_name: tripDetails?.rider_name,
-          user_id: tripDetails?.user_id,
+
+      // Navigate to BookingComplete and pass rider info via state
+      navigate("/BookingComplete", {
+        state: {
+          riderInfo: {
+            rider_name: tripDetails?.rider_name,
+            user_id: tripDetails?.user_id,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      alert("Error saving ride history: " + error.message);
+    }
   };
 
   return (
