@@ -151,7 +151,7 @@ export const Notif = () => {
                         rider_name: user?.name,
                         user_id: user?.user_id,
                       });
-                      navigate("/Messages"); // Redirect to Messages after accepting
+                      navigate("/Messages", { state: { bookingId: notif.bookingDetails.booking_id } }); // Pass bookingId in navigation state
                     }
                   }}
                 >
