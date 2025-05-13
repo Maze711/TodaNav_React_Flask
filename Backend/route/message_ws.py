@@ -101,7 +101,11 @@ def handle_message(data):
         logger.error(f"Error saving message to DB: {e}")
         db.session.rollback()
 
-    emit('message', data, broadcast=True)
+    # Emit message only to the room for the booking_id
+    if booking_id:
+        emit('message', data, room=booking_id)
+    else:
+        emit('message', data, broadcast=True)
 
 @socketio.on('create_booking')
 def handle_create_booking(data):
@@ -136,6 +140,10 @@ def handle_create_booking(data):
         except Exception as e:
             logger.error(f"Error creating table {table_name}: {e}")
 
+    # Join the user to the booking room
+    join_room(booking_id)
+    logger.info(f"User {request.sid} joined room: {booking_id}")
+
     # Notify riders with booking details
     emit('new_booking', {
         'booking_id': booking_id,
@@ -161,6 +169,11 @@ def handle_accept_booking(data):
     user_id = data.get('user_id')
 
     logger.info(f"Booking accepted: {booking_id} by {rider_name} ({user_id})")
+
+    # Join the rider to the booking room
+    join_room(booking_id)
+    logger.info(f"User {request.sid} joined room: {booking_id}")
+
     emit('booking_accepted', {
         'booking_id': booking_id,
         'rider_name': rider_name,
@@ -204,3 +217,10 @@ def handle_ride_done(data):
         'booking_id': booking_id,
         'user_id': user_id,
     }, broadcast=True)
+
+@socketio.on('join_room')
+def handle_join_room(data):
+    booking_id = data.get('booking_id')
+    if booking_id:
+        join_room(booking_id)
+        logger.info(f"User {request.sid} joined room: {booking_id}")

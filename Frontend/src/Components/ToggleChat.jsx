@@ -32,6 +32,12 @@ export const ToggleChat = ({
   }, []);
 
   useEffect(() => {
+    if (socket && bookingId) {
+      socket.emit("join_room", { booking_id: bookingId });
+    }
+  }, [bookingId, socket]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
