@@ -4,13 +4,14 @@ import { useState, useEffect, useContext } from "react";
 import { ToggleChat } from "../../Components/ToggleChat";
 import { UserContext } from "../../App";
 import { io } from "socket.io-client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const Messages = () => {
   const { user } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [search, setSearch] = useState("");
   const [bookingId, setBookingId] = useState(null);
+  const location = useLocation();
   const [showChat, setShowChat] = useState(false);
   const navigate = useNavigate();
 
@@ -42,6 +43,12 @@ export const Messages = () => {
     if (!user) return;
     const socket = io("http://127.0.0.1:5000", { query: { role: user.role } });
 
+    // Set bookingId from navigation state if available
+    if (location.state && location.state.bookingId) {
+      setBookingId(location.state.bookingId);
+      setShowChat(true);
+    }
+
     socket.on("booking_accepted", (data) => {
       if (data.user_id === user.user_id) {
         setBookingId(data.booking_id);
@@ -60,7 +67,7 @@ export const Messages = () => {
       socket.off("ride_done");
       socket.disconnect();
     };
-  }, [user, navigate]);
+  }, [user, navigate, location]);
 
   return (
     <>
