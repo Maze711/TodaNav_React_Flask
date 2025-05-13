@@ -60,39 +60,29 @@ def handle_message(data):
             receiver_id = ''
 
         if sender_id and booking_id and content:
-            # Insert into static Message table
-            message = Message(
-                sender_id=sender_id,
-                receiver_id=receiver_id,
-                booking_id=booking_id,
-                content=content,
-                timestamp=timestamp
-            )
-            db.session.add(message)
-            db.session.commit()
-            logger.info(f"Message saved to DB: {message}")
-
+            # Removed insertion into static Message table as per user request
             # Insert into dynamic booking_id table if exists
             table_name = f"`{booking_id}`"
             insert_sql = f"""
-            INSERT INTO todanav_messages.{table_name} (User_ID, Rider_ID, Messages, Timestamp, Booking_ID)
-            VALUES (:user_id, :rider_id, :messages, :timestamp, :booking_id)
+            INSERT INTO todanav_messages.{table_name} (User_Rider_ID, Messages, Timestamp, Booking_ID)
+            VALUES (:user_rider_id, :messages, :timestamp, :booking_id)
             """
             try:
                 with db.engine.connect() as conn:
                     trans = conn.begin()
-                    result = conn.execute(
+                    # Insert only one ID: rider_id if exists, else user_id
+                    user_rider_id = receiver_id if receiver_id else sender_id
+                    result1 = conn.execute(
                         text(insert_sql),
                         {
-                            "user_id": sender_id,
-                            "rider_id": receiver_id,
+                            "user_rider_id": user_rider_id,
                             "messages": content,
                             "timestamp": timestamp,
                             "booking_id": booking_id,
                         },
                     )
                     trans.commit()
-                    logger.info(f"Message inserted into dynamic table {table_name}, rows affected: {result.rowcount}")
+                    logger.info(f"Message inserted into dynamic table {table_name}, rows affected: {result1.rowcount + (result2.rowcount if 'result2' in locals() else 0)}")
             except Exception as e:
                 logger.error(f"Error inserting message into dynamic table {table_name}: {e}")
         else:
@@ -126,8 +116,8 @@ def handle_create_booking(data):
         create_table_sql = f"""
         CREATE TABLE IF NOT EXISTS todanav_messages.{table_name} (
             ID INT AUTO_INCREMENT PRIMARY KEY,
-            User_ID VARCHAR(50) NOT NULL,
-            Rider_ID VARCHAR(50),
+            User_Rider_ID VARCHAR(100) NOT NULL,
+            Account_ID VARCHAR(50),
             Messages TEXT NOT NULL,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             Booking_ID VARCHAR(50) NOT NULL
@@ -199,8 +189,7 @@ def handle_ride_done(data):
         create_table_sql = f"""
         CREATE TABLE IF NOT EXISTS todanav_messages.{table_name} (
             ID INT AUTO_INCREMENT PRIMARY KEY,
-            User_ID VARCHAR(50) NOT NULL,
-            Rider_ID VARCHAR(50),
+            User_Rider_ID VARCHAR(100) NOT NULL,
             Messages TEXT NOT NULL,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             Booking_ID VARCHAR(50) NOT NULL
