@@ -1,89 +1,112 @@
 # TodaNav Project
 
-This repository contains the frontend and backend for the TodaNav project, a modern tricycle booking and management system for Muntinlupa.
+This repository contains the frontend and backend for the TodaNav project, a modern tricycle booking and management system for Muntinlupa City.
 
 ---
 
 ## Frontend
 
-The frontend is a React-based web application built with Vite. It features a modern UI, dark mode support, interactive maps, and notification management.
+The frontend is a React-based web application built with Vite. It provides a user-friendly interface for booking tricycle rides, managing notifications, and viewing routes on interactive maps.
 
-### Tech Stack & Libraries
+### Technologies & Libraries Used
 
-- React 19.1.0
-- Vite 6.3.5
-- MDB React UI Kit
-- React Leaflet for maps
-- Leaflet for map rendering
-- Bootstrap 5
-- React Router
-- React Hot Toast for notifications
-- Axios for API requests
-- FontAwesome icons
-- Recharts for charts
-- Socket.io-client for real-time communication
+- **React 19.1.0:** Core UI library for building user interfaces.
+- **Vite 6.3.5:** Fast frontend build tool and development server.
+- **MDB React UI Kit:** Material Design Bootstrap components for React.
+- **React Leaflet & Leaflet:** For rendering interactive maps and routing.
+- **Bootstrap 5:** Responsive CSS framework.
+- **React Router:** Client-side routing.
+- **React Hot Toast:** For toast notifications.
+- **Axios:** HTTP client for API requests.
+- **FontAwesome:** Icon library.
+- **Recharts:** Charting library for data visualization.
+- **Socket.io-client:** Real-time communication with backend.
 
-See the `package.json` for the full list of dependencies.
+For a complete list of dependencies, see the [`package.json`](Frontend/package.json) file.
 
 ### Prerequisites
 
-- Node.js v18 or newer (recommended)
-- npm or yarn
+- **Node.js:** Version 18 or newer is recommended. Download from [https://nodejs.org/](https://nodejs.org/).
+- **npm or yarn:** Package managers for Node.js.
 
-### Installation & Running
+### Installation & Running the Frontend
 
-1. Clone the repository and navigate to the frontend folder:
+1. **Clone the repository and navigate to the frontend directory:**
    ```sh
    git clone https://github.com/yourusername/TodaNav_React_Flask.git
    cd TodaNav_React_Flask/Frontend
    ```
 
-2. Install dependencies:
+2. **Install dependencies:**
    ```sh
    npm install
    # or
    yarn install
    ```
 
-3. Start the development server:
+3. **Start the development server:**
    ```sh
    npm run dev
    # or
    yarn dev
    ```
 
-4. Open your browser and visit [http://localhost:5173](http://localhost:5173).
+4. **Access the app:**
+   Open your browser and go to [http://localhost:5173](http://localhost:5173).
 
 ---
 
 ## Backend
 
-The backend is a Flask API server providing REST and WebSocket endpoints, connected to MySQL databases.
+The backend is a Flask API server that handles user authentication, booking management, notifications, and real-time messaging via WebSocket.
 
-### Tech Stack & Requirements
+### Technologies & Libraries Used
 
-- Python 3.8 or newer (recommended)
-- Flask 3.1.0 and related libraries (see `Backend/requirements.txt`)
-- MySQL database (via XAMPP)
-- Eventlet for asynchronous server
+- **Python 3.8 or newer:** Recommended for compatibility with Flask 3.x.
+- **Flask 3.1.0:** Web framework for building the API.
+- **Flask-CORS:** Handling Cross-Origin Resource Sharing.
+- **Flask-Login:** User session management.
+- **Flask-SocketIO & Eventlet:** Real-time WebSocket communication.
+- **Flask-SQLAlchemy & SQLAlchemy:** ORM for database interactions.
+- **MySQL Connector:** For connecting to MySQL databases.
+- Other dependencies as listed in [`Backend/requirements.txt`](Backend/requirements.txt).
 
 ### Prerequisites
 
-- Python 3.8+
-- XAMPP (latest stable version recommended, e.g., 8.2.x) for MySQL server
-- Virtual environment for Python dependencies
+- **Python 3.8+**: Download from [https://www.python.org/downloads/](https://www.python.org/downloads/).
+- **XAMPP:** Provides MySQL server. Recommended version: 8.2.x or latest stable. Download from [https://www.apachefriends.org/index.html](https://www.apachefriends.org/index.html).
+- **Virtual Environment:** Recommended to isolate Python dependencies.
 
-### Installation & Running
+### Database Setup
 
-1. Install XAMPP and start the MySQL service.
+1. **Install and start XAMPP:**
+   - Launch XAMPP Control Panel.
+   - Start the **MySQL** service.
 
-2. Clone the repository and navigate to the backend folder:
+2. **Create the databases:**
+   - Use phpMyAdmin (accessible via XAMPP at [http://localhost/phpmyadmin](http://localhost/phpmyadmin)) or MySQL CLI.
+   - Import the database schema from `Database SQL/todanav_db.sql` to create necessary tables and initial data.
+
+3. **Configure database credentials:**
+   - Edit `Backend/config/config.py` to set your MySQL username, password, host, and database names.
+   - Default configuration is:
+     ```python
+     MYSQL_USER = "root"
+     MYSQL_PASSWORD = ""
+     MYSQL_HOST = "localhost"
+     MYSQL_DB = "todanav_db"
+     MYSQL_MESSAGES_DB = "todanav_messages"
+     ```
+
+### Installation & Running the Backend
+
+1. **Clone the repository and navigate to the backend directory:**
    ```sh
    git clone https://github.com/yourusername/TodaNav_React_Flask.git
    cd TodaNav_React_Flask/Backend
    ```
 
-3. (Optional but recommended) Create and activate a Python virtual environment:
+2. **Create and activate a Python virtual environment (recommended):**
    ```sh
    python -m venv venv
    # Windows
@@ -92,89 +115,78 @@ The backend is a Flask API server providing REST and WebSocket endpoints, connec
    source venv/bin/activate
    ```
 
-4. Install backend dependencies:
+3. **Install backend dependencies:**
    ```sh
    pip install -r requirements.txt
    ```
 
-5. Configure your MySQL database credentials in `Backend/config/config.py` or use the default config in `app.py`.
-
-6. Start the backend server:
+4. **Start the backend server:**
    ```sh
    python app.py
    ```
 
-   The backend server will run on [http://127.0.0.1:5000](http://127.0.0.1:5000).
+   The backend server will run at [http://127.0.0.1:5000](http://127.0.0.1:5000).
 
 ---
 
 ## Running Frontend and Backend Concurrently
 
-From the `Frontend` directory, you can run both servers concurrently using:
+To run both servers simultaneously from the `Frontend` directory, use:
 
 ```sh
 npm run dev:all
 ```
 
-This will start the frontend development server and the backend Flask server simultaneously.
+This command starts the frontend development server and the backend Flask server concurrently for easier development.
 
 ---
 
-## Database
-
-The project uses MySQL databases for application data and messages. Use XAMPP to manage the MySQL server. The database schema is provided in the `Database SQL/todanav_db.sql` file.
-
----
-
-## Project Structure
+## Project Structure Overview
 
 ```
-Frontend/
-├── public/
-├── src/
-│   ├── assets/
-│   ├── Components/
-│   ├── pages/
-│   ├── ThemeContext.jsx
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-├── package.json
-└── vite.config.js
-
-Backend/
-├── app.py
-├── requirements.txt
-├── config/
-├── models/
-├── route/
-└── ...
+TodaNav_React_Flask/
+├── Frontend/
+│   ├── public/                # Static assets
+│   ├── src/                   # React source code
+│   ├── package.json           # Frontend dependencies and scripts
+│   └── vite.config.js         # Vite configuration
+├── Backend/
+│   ├── app.py                 # Flask application entry point
+│   ├── requirements.txt       # Python dependencies
+│   ├── config/                # Configuration files
+│   ├── models/                # Database models
+│   ├── route/                 # API route handlers
+│   └── ...                   # Other backend files
+├── Database SQL/
+│   └── todanav_db.sql         # Database schema and initial data
+└── README.md                  # This file
 ```
-
----
-
-## Scripts
-
-### Frontend
-
-- `npm run dev` — Start frontend development server
-- `npm run build` — Build frontend for production
-- `npm run preview` — Preview production build
-- `npm run lint` — Lint frontend codebase
-
-### Backend
-
-- Run `python app.py` to start the backend Flask server
 
 ---
 
 ## Additional Notes
 
-- Ensure XAMPP MySQL service is running before starting the backend.
-- Configure database credentials properly in `Backend/config/config.py`.
-- The backend uses WebSocket for real-time messaging.
-- The frontend connects to backend API at `http://localhost:5000` and frontend server runs on port 5173.
+- Ensure the MySQL service in XAMPP is running before starting the backend.
+- The backend uses WebSocket for real-time messaging features.
+- The frontend communicates with the backend API at `http://localhost:5000`.
+- Adjust ports in configuration files if needed to avoid conflicts.
+- For any issues, check logs and console output for debugging information.
 
 ---
 
-**TodaNav** — Modern Tricycle Booking for Muntinlupa
+## Useful Commands Summary
+
+| Command                      | Description                              | Location  |
+|------------------------------|----------------------------------------|-----------|
+| `npm install`                | Install frontend dependencies          | Frontend  |
+| `npm run dev`                | Start frontend development server      | Frontend  |
+| `python -m venv venv`        | Create Python virtual environment       | Backend   |
+| `venv\Scripts\activate`      | Activate virtual environment (Windows) | Backend   |
+| `source venv/bin/activate`   | Activate virtual environment (macOS/Linux) | Backend   |
+| `pip install -r requirements.txt` | Install backend dependencies       | Backend   |
+| `python app.py`              | Start backend Flask server              | Backend   |
+| `npm run dev:all`            | Run frontend and backend concurrently   | Frontend  |
+
+---
+
+**TodaNav** — Modern Tricycle Booking for Muntinlupa City
