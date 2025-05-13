@@ -80,6 +80,7 @@ def handle_message(data):
             """
             try:
                 with db.engine.connect() as conn:
+                    trans = conn.begin()
                     result = conn.execute(
                         text(insert_sql),
                         {
@@ -90,6 +91,7 @@ def handle_message(data):
                             "booking_id": booking_id,
                         },
                     )
+                    trans.commit()
                     logger.info(f"Message inserted into dynamic table {table_name}, rows affected: {result.rowcount}")
             except Exception as e:
                 logger.error(f"Error inserting message into dynamic table {table_name}: {e}")
@@ -104,7 +106,7 @@ def handle_message(data):
 @socketio.on('create_booking')
 def handle_create_booking(data):
     """
-    Notify riders about a new booking and send confirmation back to the user.
+    Notify riders about a new booking, create dynamic message table, and send confirmation back to the user.
     """
     booking_id = data.get('booking_id')
     user_id = data.get('user_id')
@@ -113,6 +115,26 @@ def handle_create_booking(data):
 
     # Log the received data
     logger.info(f"Received create_booking event with data: {data}")
+
+    # Create table named after booking_id if not exists
+    if booking_id:
+        table_name = f"`{booking_id}`"
+        create_table_sql = f"""
+        CREATE TABLE IF NOT EXISTS todanav_messages.{table_name} (
+            ID INT AUTO_INCREMENT PRIMARY KEY,
+            User_ID VARCHAR(50) NOT NULL,
+            Rider_ID VARCHAR(50),
+            Messages TEXT NOT NULL,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            Booking_ID VARCHAR(50) NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        """
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text(create_table_sql))
+                logger.info(f"Created table {table_name} in todanav_messages database.")
+        except Exception as e:
+            logger.error(f"Error creating table {table_name}: {e}")
 
     # Notify riders with booking details
     emit('new_booking', {
