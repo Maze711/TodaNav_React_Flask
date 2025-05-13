@@ -32,6 +32,7 @@ import { AdminNews } from "./pages/Admin/News/AdminNews";
 import { RiderApplicants } from "./pages/Admin/Applications/RiderApplicants";
 import { Users } from "./pages/Admin/Users/Users";
 import { SearchProvider } from "./contexts/SearchContext";
+import { TripHistory } from "./pages/History/TripHistory";
 
 export const ApiUrlContext = createContext(API_BASE_URL);
 export const UserContext = createContext(null);
@@ -156,6 +157,7 @@ function App() {
                       <Route path="/Messages" element={<Messages />} />
                       <Route path="/todaList" element={<TodaList />} />
                       <Route path="/Account" element={<Account />} />
+                      <Route path="/TripHistory" element={<TripHistory />} />
                       <Route path="/Notif" element={<Notif />} />
                       <Route path="/Booking" element={<BookingApp />} />
                       <Route path="/BookingDetail" element={<BookingDetail />} />
