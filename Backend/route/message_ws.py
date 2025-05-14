@@ -3,7 +3,7 @@ import os
 from flask import Blueprint, request
 from flask_socketio import emit, join_room
 from config.socketio_config import socketio
-from models.models import db, Message
+from models.models import db
 from datetime import datetime
 from sqlalchemy import text
 
