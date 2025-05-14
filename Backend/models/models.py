@@ -17,14 +17,6 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.String(20), nullable=False)
-    receiver_id = db.Column(db.String(20), nullable=False)
-    booking_id = db.Column(db.String(50), nullable=False)  # Added booking_id column
-    content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
 class TripHistory(db.Model):
     __tablename__ = 'trip_history'
 
