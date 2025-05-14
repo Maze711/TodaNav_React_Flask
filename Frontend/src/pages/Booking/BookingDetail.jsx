@@ -235,7 +235,7 @@ export const BookingDetail = () => {
       // Prepare data for ride history
       const rideHistoryData = {
         user_id: user.user_id,
-        rider_id: tripDetails?.rider_name || "", // Assuming rider_name as rider_id, adjust if needed
+        rider_id: tripDetails?.user_id || "", // Changed from rider_name to user_id as rider_id
         booking_id: tripDetails.booking_id,
         start_time: new Date().toISOString(), // Use current time or adjust as needed
         end_time: new Date().toISOString(),   // Use current time or adjust as needed
