@@ -218,3 +218,22 @@ def handle_join_room(data):
     if booking_id:
         join_room(booking_id)
         logger.info(f"User {request.sid} joined room: {booking_id}")
+
+@socketio.on('payment_received_signal')
+def handle_payment_received_signal(data):
+    booking_id = data.get('booking_id')
+    user_id = data.get('user_id')
+    logger.info(f"Payment received signal for booking: {booking_id} by user: {user_id}")
+    if booking_id:
+        # Emit event to the booking room to notify clients
+        emit('payment_received_update', {
+            'booking_id': booking_id,
+            'user_id': user_id,
+        }, room=booking_id)
+
+@socketio.on('clear_booking_chat')
+def handle_clear_booking_chat(data):
+    booking_id = data.get('booking_id')
+    logger.info(f"Clear booking chat signal for booking: {booking_id}")
+    if booking_id:
+        emit('clear_booking_chat', {'booking_id': booking_id}, room=booking_id)

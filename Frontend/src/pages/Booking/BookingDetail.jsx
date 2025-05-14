@@ -579,7 +579,15 @@ export const BookingDetail = () => {
             <button
               className="btn btn-primary w-100"
               style={{ backgroundColor: "#198754", border: "none" }}
-              onClick={handleRideDone}
+              onClick={() => {
+                handleRideDone();
+                if (tripDetails?.booking_id) {
+                  socket.emit("payment_received_signal", {
+                    booking_id: tripDetails.booking_id,
+                    user_id: user?.user_id,
+                  });
+                }
+              }}
             >
               Pay Now
             </button>
@@ -602,13 +610,19 @@ export const BookingDetail = () => {
             overflow: "hidden",
           }}
         >
-          <ToggleChat
-            userName={chatProps.userName}
-            userRole={user?.role}
-            autoOpen={true}
-            floating={false}
-            bookingId={tripDetails?.booking_id}
-          />
+      <ToggleChat
+        userName={chatProps.userName}
+        userRole={user?.role}
+        autoOpen={true}
+        floating={false}
+        bookingId={tripDetails?.booking_id}
+        onClearBooking={() => {
+          console.log("onClearBooking called: clearing tripDetails and chat state");
+          setTripDetails(null);
+          setShowChat(false);
+          setChatProps({});
+        }}
+      />
         </div>
       )}
     </MDBContainer>

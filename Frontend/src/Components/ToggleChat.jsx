@@ -9,7 +9,8 @@ export const ToggleChat = ({
   autoOpen = false,
   style = {},
   floating = true,
-  bookingId = null,
+  bookingId: bookingIdProp = null,
+  onClearBooking = () => {},
 }) => {
   const { user } = useContext(UserContext);
   const [open, setOpen] = useState(autoOpen);
@@ -17,6 +18,8 @@ export const ToggleChat = ({
   const [input, setInput] = useState("");
   const [socket, setSocket] = useState(null);
   const [rideDone, setRideDone] = useState(false);
+  const [paymentReceivedActive, setPaymentReceivedActive] = useState(false);
+  const [bookingId, setBookingId] = useState(bookingIdProp);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
@@ -28,8 +31,34 @@ export const ToggleChat = ({
       setMessages((prev) => [...prev, msg]);
     });
 
+    newSocket.on("payment_received_update", (data) => {
+      if (data.booking_id === bookingId) {
+        setPaymentReceivedActive(true);
+      }
+    });
+
+    newSocket.on("clear_booking_chat", (data) => {
+      if (data.booking_id === bookingId) {
+        setMessages([]);
+        setInput("");
+        // Optionally reset bookingId or trigger reload logic here if needed
+      }
+    });
+
     return () => newSocket.close();
-  }, []);
+  }, [bookingId]);
+
+  useEffect(() => {
+    if (!bookingId) {
+      setMessages([]);
+      setInput("");
+      setPaymentReceivedActive(false);
+    }
+  }, [bookingId]);
+
+  useEffect(() => {
+    setBookingId(bookingIdProp);
+  }, [bookingIdProp]);
 
   useEffect(() => {
     if (socket && bookingId) {
@@ -46,7 +75,7 @@ export const ToggleChat = ({
       alert("Booking ID is not set yet. Please wait until booking is confirmed.");
       return;
     }
-    if (input.trim() && socket) {
+    if (input.trim() && socket && !paymentReceivedActive) {
       const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       console.log(`Booking ID: ${bookingId}, User ID: ${user?.user_id}, Message: ${input}, Timestamp: ${timestamp}`);
       const msg = {
@@ -60,6 +89,18 @@ export const ToggleChat = ({
       socket.emit("message", msg);
       // Removed optimistic local add to prevent duplicate messages
       setInput("");
+    }
+  };
+
+  const handlePaymentReceivedClick = () => {
+    if (socket && bookingId) {
+      socket.emit("clear_booking_chat", { booking_id: bookingId });
+      setPaymentReceivedActive(false);
+      setMessages([]);
+      setInput("");
+      setBookingId(null);
+      onClearBooking();
+      // Optionally reset bookingId or trigger reload logic here if needed
     }
   };
 
@@ -230,6 +271,7 @@ export const ToggleChat = ({
               marginBottom: 8,
               background: "#fff"
             }}
+            disabled={paymentReceivedActive}
           />
           <button
             onClick={sendMessage}
@@ -241,28 +283,30 @@ export const ToggleChat = ({
               color: "#fff",
               fontWeight: 600,
               fontSize: 15,
-              cursor: "pointer",
+              cursor: paymentReceivedActive ? "not-allowed" : "pointer",
               transition: "background 0.2s"
             }}
+            disabled={paymentReceivedActive}
           >
             Send
           </button>
-          {userRole?.toLowerCase() === "rider" && !rideDone && bookingId && (
+          {userRole?.toLowerCase() === "rider" && bookingId && (
             <button
-              onClick={handleRideDone}
+              onClick={handlePaymentReceivedClick}
+              disabled={!paymentReceivedActive}
               style={{
                 padding: "8px 22px",
                 borderRadius: 20,
                 border: "none",
-                background: "#198754",
+                background: paymentReceivedActive ? "green" : "gray",
                 color: "#fff",
                 fontWeight: 600,
                 fontSize: 15,
-                cursor: "pointer",
+                cursor: paymentReceivedActive ? "pointer" : "not-allowed",
                 transition: "background 0.2s"
               }}
             >
-              Ride Done
+              Payment Received
             </button>
           )}
         </div>
