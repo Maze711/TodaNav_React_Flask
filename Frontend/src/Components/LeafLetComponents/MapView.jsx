@@ -28,7 +28,18 @@ export const MapView = ({
     const fetchRoute = async () => {
       if (fromCoords && toCoords) {
         // Use the selected profile for more accurate routing
-        const url = "https://router.project-osrm.org/route/v1/" + routeProfile + "/" + fromCoords[1] + "," + fromCoords[0] + ";" + toCoords[1] + "," + toCoords[0] + "?overview=full&geometries=geojson";
+        const url =
+          "https://router.project-osrm.org/route/v1/" +
+          routeProfile +
+          "/" +
+          fromCoords[1] +
+          "," +
+          fromCoords[0] +
+          ";" +
+          toCoords[1] +
+          "," +
+          toCoords[0] +
+          "?overview=full&geometries=geojson";
         const res = await fetch(url);
         const data = await res.json();
         if (data.routes && data.routes.length > 0) {
@@ -86,17 +97,13 @@ export const MapView = ({
         </>
       )}
       {toCoords && (
-        <CircleMarker
-          center={toCoords}
-          radius={10}
-          pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.5 }}
-        >
+        <Marker position={toCoords}>
           <Popup>
             Dropoff: {toSearch}
             <br />
             Lat: {toCoords[0]}, Lng: {toCoords[1]}
           </Popup>
-        </CircleMarker>
+        </Marker>
       )}
       {todaMarkers.map((toda, index) => (
         <Marker key={index} position={toda.coordinates}>
@@ -114,19 +121,20 @@ export const MapView = ({
         fromCoords &&
         userLocation[0] === fromCoords[0] &&
         userLocation[1] === fromCoords[1]
-      ) && userLocation && (
-        <CircleMarker
-          center={userLocation}
-          radius={10}
-          pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.5 }}
-        >
-          <Popup>
-            Your Location
-            <br />
-            Lat: {userLocation[0]}, Lng: {userLocation[1]}
-          </Popup>
-        </CircleMarker>
-      )}
+      ) &&
+        userLocation && (
+          <CircleMarker
+            center={userLocation}
+            radius={10}
+            pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.5 }}
+          >
+            <Popup>
+              Your Location
+              <br />
+              Lat: {userLocation[0]}, Lng: {userLocation[1]}
+            </Popup>
+          </CircleMarker>
+        )}
       {routeCoords.length > 0 && (
         <Polyline
           positions={routeCoords}
