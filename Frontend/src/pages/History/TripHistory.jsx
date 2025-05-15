@@ -13,16 +13,23 @@ export const TripHistory = () => {
 
   useEffect(() => {
     console.log("User object in TripHistory:", user);
-    if (!user || !user.id) {
+    if (!user || (!user.id && !user.user_id)) {
       setError("User not logged in");
       setLoading(false);
       return;
     }
     const fetchRideHistory = async () => {
       try {
-        // Use user.user_id if available, else fallback to user.id
-        const userId = user.user_id || user.id;
-        const response = await fetch(`/api/ride_history/${userId}`);
+        let response;
+        if (user.role === 'RIDER') {
+          // For rider role, use rider endpoint with user_id or id as rider_id
+          const riderId = user.user_id || user.id;
+          response = await fetch(`/api/ride_history/rider/${riderId}`);
+        } else {
+          // For other roles, use user_id or id
+          const userId = user.user_id || user.id;
+          response = await fetch(`/api/ride_history/${userId}`);
+        }
         if (!response.ok) {
           const data = await response.json();
           throw new Error(data.message || "Failed to fetch ride history");

@@ -31,6 +31,33 @@ def get_ride_history(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@ride_history_bp.route('/api/ride_history/rider/<rider_id>', methods=['GET'])
+def get_ride_history_by_rider(rider_id):
+    try:
+        # Query trip history for the given rider_id
+        trips = TripHistory.query.filter_by(rider_id=rider_id).all()
+        if not trips:
+            return jsonify({'message': 'No ride history found for this rider'}), 404
+
+        # Serialize the trip data
+        trip_list = []
+        for trip in trips:
+            trip_list.append({
+                'id': trip.id,
+                'user_id': trip.user_id,
+                'rider_id': trip.rider_id,
+                'booking_id': trip.booking_id,
+                'start_time': trip.start_time.isoformat(),
+                'end_time': trip.end_time.isoformat(),
+                'date': trip.date.isoformat(),
+                'location_from': trip.location_from,
+                'location_to': trip.location_to
+            })
+
+        return jsonify({'ride_history': trip_list}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @ride_history_bp.route('/api/ride_history', methods=['POST'])
 def add_ride_history():
     try:
