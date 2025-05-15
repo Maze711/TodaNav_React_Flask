@@ -64,6 +64,7 @@ const BookingDetailInner = () => {
   const [hideTripDetailsContainer, setHideTripDetailsContainer] = useState(false);
   const [hideRiderInfoContainer, setHideRiderInfoContainer] = useState(false);
   const [fromSearch, setFromSearch] = useState(initialFromSearch);
+  const [fromDisplayLabel, setFromDisplayLabel] = useState("Current Location");
   const [toSearch, setToSearch] = useState(getQueryParam("to") || "");
   const [mapCenter, setMapCenter] = useState(defaultLocation);
   const [fromCoords, setFromCoords] = useState(null);
@@ -428,18 +429,22 @@ const BookingDetailInner = () => {
           <>
             <MDBCol md="5">
               <LocationSearchInput
-                value={fromSearch}
-                onChange={(e) => setFromSearch(e.target.value)}
-                placeholder="From (e.g., Bayanan)"
+                value={fromDisplayLabel}
+                onChange={(e) => {
+                  setFromDisplayLabel(e.target.value);
+                  setFromSearch(e.target.value);
+                }}
+                placeholder="Current Location"
                 locations={muntinlupaLocations()}
-                onSelect={(location) =>
+                onSelect={(location) => {
                   handleLocationSelect(
                     location,
                     setFromSearch,
                     setFromCoords,
                     "from_location"
-                  )
-                }
+                  );
+                  setFromDisplayLabel(location);
+                }}
                 isDark={isDark}
                 textColor={textColor}
                 mainBorder={mainBorder}
