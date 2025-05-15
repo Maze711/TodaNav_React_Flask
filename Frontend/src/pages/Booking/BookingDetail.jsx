@@ -30,6 +30,9 @@ export const BookingDetail = () => {
   const { user } = useContext(UserContext);
   const { userLocation, findNearbyTODA } = useContext(LocationContext);
 
+  // New state to keep search input open
+  const keepSearchOpen = location.state?.keepSearchOpen || false;
+
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
   const profileIcon = isDark ? userIcon : userWhiteIcon;
@@ -43,6 +46,8 @@ export const BookingDetail = () => {
 
   const [todaSearch, setTodaSearch] = useState("");
   const [selectedToda, setSelectedToda] = useState(null);
+  const [hideTripDetailsContainer, setHideTripDetailsContainer] = useState(false);
+  const [hideRiderInfoContainer, setHideRiderInfoContainer] = useState(false);
   const [fromSearch, setFromSearch] = useState(getQueryParam("from"));
   const [toSearch, setToSearch] = useState("");
   const [mapCenter, setMapCenter] = useState([14.4167, 121.0333]);
@@ -59,24 +64,38 @@ export const BookingDetail = () => {
   const [nearbyTODAs, setNearbyTODAs] = useState([]);
 
   useEffect(() => {
-    if (fromSearch) {
-      let coordinates = null;
-      for (const category of Object.values(muntinlupaLocations())) {
-        if (category[fromSearch]) {
-          coordinates = category[fromSearch];
-          break;
-        }
-      }
-      if (coordinates) {
-        setFromCoords(coordinates);
-        setMapCenter(coordinates);
-        setTripDetails((prev) => ({
-          ...prev,
-          from_location: fromSearch,
-        }));
-      }
+    const locateClicked = localStorage.getItem("locateClicked");
+    if (locateClicked === "true") {
+      setHideTripDetailsContainer(true);
+      setHideRiderInfoContainer(true);
+      setShowTripDetails(true);
+      localStorage.removeItem("locateClicked");
     }
-  }, [fromSearch]);
+  }, []);
+
+  // New effect to set hide containers based on keepSearchOpen from BottomNav
+  useEffect(() => {
+    if (keepSearchOpen) {
+      setHideTripDetailsContainer(true);
+      setHideRiderInfoContainer(true);
+    }
+  }, [keepSearchOpen]);
+
+  useEffect(() => {
+    if (selectedToda) {
+      setHideTripDetailsContainer(false);
+      setHideRiderInfoContainer(false);
+    }
+  }, [selectedToda]);
+
+  // ... rest of code unchanged ...
+
+  // Modify the conditional rendering of the TODA search input and from/to inputs
+  // Find the JSX part where the search input is conditionally rendered:
+  // Replace {!selectedToda ? ( ... ) : ( ... )} with:
+  // {(!selectedToda || keepSearchOpen) ? ( ... ) : ( ... )}
+
+  // I will now locate and edit that JSX part below.
 
   useEffect(() => {
     socket.on("booking_confirmation", (data) => {
@@ -323,7 +342,7 @@ export const BookingDetail = () => {
           className="align-items-center justify-content-center"
           style={{ pointerEvents: "auto" }}
         >
-          {!selectedToda ? (
+          {(!selectedToda || keepSearchOpen) ? (
             <MDBCol md="12">
               <LocationSearchInput
                 value={todaSearch}
@@ -467,7 +486,7 @@ export const BookingDetail = () => {
 
         {/* Trip Details heading and horizontal line */}
         <h3 className="fw-bold text-center" style={{ color: textColor }}>
-          Trip Details
+          {hideTripDetailsContainer ? "TODA Location" : "Trip Details"}
         </h3>
         <hr style={{ border: "2px solid", borderColor: "black" }} />
 
@@ -509,7 +528,7 @@ export const BookingDetail = () => {
         )}
 
         {/* Rider info */}
-        {showTripDetails && (
+        {!hideTripDetailsContainer && !hideRiderInfoContainer && showTripDetails && !keepSearchOpen && (
           <div
             className="d-flex align-items-center mb-3"
             style={{
@@ -565,7 +584,7 @@ export const BookingDetail = () => {
         )}
 
         {/* Book Ride / Ride Done button */}
-        {showTripDetails &&
+        {!hideTripDetailsContainer && !hideRiderInfoContainer && showTripDetails && !keepSearchOpen &&
           (!rideDone ? (
             <button
               className="btn btn-success w-100"

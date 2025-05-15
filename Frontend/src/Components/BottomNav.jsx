@@ -68,7 +68,7 @@ export const BottomNav = () => {
           </li>
           {user.role === "USER" && (
             <li className="nav-item text-center">
-              <Link to="/BookingDetail" className="nav-link" onClick={handleLocateClick}>
+              <Link to="/BookingDetail" state={{ keepSearchOpen: true }} className="nav-link" onClick={handleLocateClick}>
                 <img src={icons.locate} alt="Booking" className="nav-icon" />
                 <div className="nav-text" style={textStyle}>
                   Locate
