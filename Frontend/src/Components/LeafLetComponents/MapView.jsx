@@ -21,6 +21,7 @@ export const MapView = ({
   todaMarkers = [], // New prop for TODA markers
   userLocation, // New prop for user's exact location
   defaultFromLocationLabel, // New prop for default from location label
+  onTodaMarkerClick, // New callback prop for TODA marker click
 }) => {
   const [routeCoords, setRouteCoords] = useState([]);
 
@@ -106,7 +107,17 @@ export const MapView = ({
         </Marker>
       )}
       {todaMarkers.map((toda, index) => (
-        <Marker key={index} position={toda.coordinates}>
+        <Marker
+          key={index}
+          position={toda.coordinates}
+          eventHandlers={{
+            click: () => {
+              if (typeof onTodaMarkerClick === "function") {
+                onTodaMarkerClick(toda);
+              }
+            },
+          }}
+        >
           <Popup>
             {toda.name}
             <br />
