@@ -50,6 +50,11 @@ export const Home = () => {
     navigate("/Booking");
   };
 
+  // Pass state to Booking to hide search input
+  const routeToBookingWithHideSearch = () => {
+    navigate("/Booking", { state: { hideSearchInput: true } });
+  };
+
   const routeToTripHistory = () => {
     navigate("/TripHistory");
   };
@@ -142,7 +147,7 @@ export const Home = () => {
           type="button"
           className="btn p-3 mb-3"
           style={{ backgroundColor: "#b26d18" }}
-          onClick={routeToBooking}
+          onClick={routeToBookingWithHideSearch}
         >
           <strong>Start Booking Now</strong>
         </button>

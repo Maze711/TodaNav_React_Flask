@@ -28,10 +28,11 @@ export const BookingDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const { userLocation, findNearbyTODA } = useContext(LocationContext);
+const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(LocationContext);
 
   // New state to keep search input open
   const keepSearchOpen = location.state?.keepSearchOpen || false;
+  const hideSearchInput = location.state?.hideSearchInput || false;
 
   const containerBg = isDark ? "#202124" : "white";
   const textColor = isDark ? "#fff" : "#000";
@@ -49,7 +50,7 @@ export const BookingDetail = () => {
   const [hideTripDetailsContainer, setHideTripDetailsContainer] = useState(false);
   const [hideRiderInfoContainer, setHideRiderInfoContainer] = useState(false);
   const [fromSearch, setFromSearch] = useState(getQueryParam("from"));
-  const [toSearch, setToSearch] = useState("");
+  const [toSearch, setToSearch] = useState(getQueryParam("to") || "");
   const [mapCenter, setMapCenter] = useState([14.4167, 121.0333]);
   const [fromCoords, setFromCoords] = useState(null);
   const [toCoords, setToCoords] = useState(null);
@@ -151,6 +152,26 @@ export const BookingDetail = () => {
   }, [tripDetails?.booking_id, user?.name]);
 
   useEffect(() => {
+    // Set fromCoords and toCoords based on fromSearch and toSearch when component mounts or when they change
+    if (fromSearch) {
+      for (const category of Object.values(muntinlupaLocations())) {
+        if (category[fromSearch]) {
+          setFromCoords(category[fromSearch]);
+          break;
+        }
+      }
+    }
+    if (toSearch) {
+      for (const category of Object.values(muntinlupaLocations())) {
+        if (category[toSearch]) {
+          setToCoords(category[toSearch]);
+          break;
+        }
+      }
+    }
+  }, [fromSearch, toSearch]);
+
+  useEffect(() => {
     if (fromCoords && toCoords) {
       const dist = calculateDistance(
         fromCoords[0],
@@ -167,6 +188,7 @@ export const BookingDetail = () => {
     }
   }, [fromCoords, toCoords]);
 
+  /*
   useEffect(() => {
     if (userLocation && userLocation.length === 2) {
       const nearby = findNearbyTODA(userLocation[0], userLocation[1]);
@@ -174,6 +196,10 @@ export const BookingDetail = () => {
       setMapCenter(userLocation);
     }
   }, [userLocation, findNearbyTODA]);
+  */
+
+  // Hide geolocation marker if userLocation is defaultLocation
+  // const showUserLocationMarker = !(userLocation[0] === defaultLocation[0] && userLocation[1] === defaultLocation[1]);
 
   const handleLocationSelect = (location, setSearch, setCoords, field) => {
     let coordinates = null;
@@ -312,16 +338,16 @@ export const BookingDetail = () => {
           zIndex: 0,
         }}
       >
-        <MapView
-          center={mapCenter}
-          fromCoords={fromCoords}
-          toCoords={toCoords}
-          fromSearch={fromSearch}
-          toSearch={toSearch}
-          isDark={isDark}
-          todaMarkers={selectedToda ? [selectedToda] : []}
-          userLocation={userLocation} // Pass userLocation to MapView
-        />
+      <MapView
+        center={mapCenter}
+        fromCoords={fromCoords}
+        toCoords={toCoords}
+        fromSearch={fromSearch}
+        toSearch={toSearch}
+        isDark={isDark}
+        todaMarkers={selectedToda ? [selectedToda] : []}
+        // userLocation={showUserLocationMarker ? userLocation : null} // Pass userLocation to MapView or null to hide
+      />
       </div>
 
       {/* Search Bar */}
@@ -342,93 +368,93 @@ export const BookingDetail = () => {
           className="align-items-center justify-content-center"
           style={{ pointerEvents: "auto" }}
         >
-          {(!selectedToda || keepSearchOpen) ? (
-            <MDBCol md="12">
-              <LocationSearchInput
-                value={todaSearch}
-                onChange={(e) => {
-                  setTodaSearch(e.target.value);
-                  setSelectedToda(null);
-                }}
-                placeholder="Search TODA Location"
-                locations={{
-                  "TODA Locations": todaLocations.reduce((acc, toda) => {
-                    acc[toda.name] = toda.coordinates;
-                    return acc;
-                  }, {}),
-                }}
-                onSelect={(location) => {
-                  const matchedToda = todaLocations.find(
-                    (toda) => toda.name === location
-                  );
-                  if (matchedToda) {
-                    setSelectedToda(matchedToda);
-                    setTodaSearch("");
-                  }
-                }}
-                isDark={isDark}
-                textColor={textColor}
-                mainBorder={mainBorder}
-                containerBg={containerBg}
-              />
-            </MDBCol>
-          ) : (
-            <>
-              <MDBCol md="5">
-                <LocationSearchInput
-                  value={fromSearch}
-                  onChange={(e) => setFromSearch(e.target.value)}
-                  placeholder="From (e.g., Bayanan)"
-                  locations={muntinlupaLocations()}
-                  onSelect={(location) =>
-                    handleLocationSelect(
-                      location,
-                      setFromSearch,
-                      setFromCoords,
-                      "from_location"
-                    )
-                  }
-                  isDark={isDark}
-                  textColor={textColor}
-                  mainBorder={mainBorder}
-                  containerBg={containerBg}
-                />
-              </MDBCol>
-              <MDBCol md="5">
-                <LocationSearchInput
-                  value={toSearch}
-                  onChange={(e) => setToSearch(e.target.value)}
-                  placeholder="To (e.g., Alabang)"
-                  locations={muntinlupaLocations()}
-                  onSelect={(location) =>
-                    handleLocationSelect(
-                      location,
-                      setToSearch,
-                      setToCoords,
-                      "to_location"
-                    )
-                  }
-                  isDark={isDark}
-                  textColor={textColor}
-                  mainBorder={mainBorder}
-                  containerBg={containerBg}
-                />
-              </MDBCol>
-              <MDBCol md="2" className="text-center">
-                <button
-                  className="btn btn-sm"
-                  style={{
-                    backgroundColor: containerBg,
-                    color: textColor,
-                    border: `1px solid ${mainBorder}`,
-                  }}
-                  onClick={() => setSelectedToda(null)}
-                >
-                  Change TODA
-                </button>
-              </MDBCol>
-            </>
-          )}
+      {(!selectedToda || keepSearchOpen) && !hideSearchInput ? (
+        <MDBCol md="12">
+          <LocationSearchInput
+            value={todaSearch}
+            onChange={(e) => {
+              setTodaSearch(e.target.value);
+              setSelectedToda(null);
+            }}
+            placeholder="Search TODA Location"
+            locations={{
+              "TODA Locations": todaLocations.reduce((acc, toda) => {
+                acc[toda.name] = toda.coordinates;
+                return acc;
+              }, {}),
+            }}
+            onSelect={(location) => {
+              const matchedToda = todaLocations.find(
+                (toda) => toda.name === location
+              );
+              if (matchedToda) {
+                setSelectedToda(matchedToda);
+                setTodaSearch("");
+              }
+            }}
+            isDark={isDark}
+            textColor={textColor}
+            mainBorder={mainBorder}
+            containerBg={containerBg}
+          />
+        </MDBCol>
+      ) : (
+        <>
+          <MDBCol md="5">
+            <LocationSearchInput
+              value={fromSearch}
+              onChange={(e) => setFromSearch(e.target.value)}
+              placeholder="From (e.g., Bayanan)"
+              locations={muntinlupaLocations()}
+              onSelect={(location) =>
+                handleLocationSelect(
+                  location,
+                  setFromSearch,
+                  setFromCoords,
+                  "from_location"
+                )
+              }
+              isDark={isDark}
+              textColor={textColor}
+              mainBorder={mainBorder}
+              containerBg={containerBg}
+            />
+          </MDBCol>
+          <MDBCol md="5">
+            <LocationSearchInput
+              value={toSearch}
+              onChange={(e) => setToSearch(e.target.value)}
+              placeholder="To (e.g., Alabang)"
+              locations={muntinlupaLocations()}
+              onSelect={(location) =>
+                handleLocationSelect(
+                  location,
+                  setToSearch,
+                  setToCoords,
+                  "to_location"
+                )
+              }
+              isDark={isDark}
+              textColor={textColor}
+              mainBorder={mainBorder}
+              containerBg={containerBg}
+            />
+          </MDBCol>
+          <MDBCol md="2" className="text-center">
+            <button
+              className="btn btn-sm"
+              style={{
+                backgroundColor: containerBg,
+                color: textColor,
+                border: `1px solid ${mainBorder}`,
+              }}
+              onClick={() => setSelectedToda(null)}
+            >
+              Change TODA
+            </button>
+          </MDBCol>
+        </>
+      )}
         </MDBRow>
       </div>
 
@@ -510,7 +536,7 @@ export const BookingDetail = () => {
               Coordinates: {selectedToda.coordinates[0].toFixed(6)}°,{" "}
               {selectedToda.coordinates[1].toFixed(6)}°
             </p>
-            {userLocation && (
+            {/* {userLocation && (
               <p style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
                 Distance:{" "}
                 {Math.round(
@@ -523,7 +549,7 @@ export const BookingDetail = () => {
                 )}{" "}
                 meters
               </p>
-            )}
+            )} */}
           </div>
         )}
 
