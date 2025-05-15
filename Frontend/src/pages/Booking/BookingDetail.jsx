@@ -372,8 +372,12 @@ const BookingDetailInner = () => {
         fromSearch={fromSearch}
         toSearch={toSearch}
         isDark={isDark}
-        todaMarkers={selectedToda ? [selectedToda] : []}
+        todaMarkers={todaLocations}
         defaultFromLocationLabel={defaultFromLocationLabel}
+        onTodaMarkerClick={(toda) => {
+          setSelectedToda(toda);
+          setTodaSearch(toda.name);
+        }}
       />
       </div>
 
