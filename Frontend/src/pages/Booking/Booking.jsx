@@ -26,11 +26,11 @@ export const BookingApp = () => {
 
   const handleSearchChange = (e) => setSearchValue(e.target.value);
 
-  const handleSelect = (location) => {
-    setSearchValue(location);
-    // Pass both from and to as empty string initially, so user can select both in BookingDetail
-    navigate(`/BookingDetail?from=${encodeURIComponent(location)}&to=`, { state: { hideSearchInput: true } });
-  };
+    const handleSelect = (location) => {
+      setSearchValue(location);
+      // Pass selected location as 'to' and empty 'from' so user can select 'from' in BookingDetail
+      navigate(`/BookingDetail?from=&to=${encodeURIComponent(location)}`, { state: { hideSearchInput: true } });
+    };
 
   return (
     <>

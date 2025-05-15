@@ -60,6 +60,14 @@ const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(Locat
   const [rideDone, setRideDone] = useState(false);
   const [showTripDetails, setShowTripDetails] = useState(true);
   const [tripDetails, setTripDetails] = useState(null);
+
+  // Sync tripDetails.to_location with toSearch state
+  useEffect(() => {
+    setTripDetails((prev) => ({
+      ...prev,
+      to_location: toSearch,
+    }));
+  }, [toSearch]);
   const [showChat, setShowChat] = useState(false);
   const [chatProps, setChatProps] = useState({});
   const [nearbyTODAs, setNearbyTODAs] = useState([]);
@@ -399,61 +407,61 @@ const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(Locat
           />
         </MDBCol>
       ) : (
-        <>
-          <MDBCol md="5">
-            <LocationSearchInput
-              value={fromSearch}
-              onChange={(e) => setFromSearch(e.target.value)}
-              placeholder="From (e.g., Bayanan)"
-              locations={muntinlupaLocations()}
-              onSelect={(location) =>
-                handleLocationSelect(
-                  location,
-                  setFromSearch,
-                  setFromCoords,
-                  "from_location"
-                )
-              }
-              isDark={isDark}
-              textColor={textColor}
-              mainBorder={mainBorder}
-              containerBg={containerBg}
-            />
-          </MDBCol>
-          <MDBCol md="5">
-            <LocationSearchInput
-              value={toSearch}
-              onChange={(e) => setToSearch(e.target.value)}
-              placeholder="To (e.g., Alabang)"
-              locations={muntinlupaLocations()}
-              onSelect={(location) =>
-                handleLocationSelect(
-                  location,
-                  setToSearch,
-                  setToCoords,
-                  "to_location"
-                )
-              }
-              isDark={isDark}
-              textColor={textColor}
-              mainBorder={mainBorder}
-              containerBg={containerBg}
-            />
-          </MDBCol>
-          <MDBCol md="2" className="text-center">
-            <button
-              className="btn btn-sm"
-              style={{
-                backgroundColor: containerBg,
-                color: textColor,
-                border: `1px solid ${mainBorder}`,
-              }}
-              onClick={() => setSelectedToda(null)}
-            >
-              Change TODA
-            </button>
-          </MDBCol>
-        </>
+          <>
+            <MDBCol md="5">
+              <LocationSearchInput
+                value={fromSearch}
+                onChange={(e) => setFromSearch(e.target.value)}
+                placeholder="From (e.g., Bayanan)"
+                locations={muntinlupaLocations()}
+                onSelect={(location) =>
+                  handleLocationSelect(
+                    location,
+                    setFromSearch,
+                    setFromCoords,
+                    "from_location"
+                  )
+                }
+                isDark={isDark}
+                textColor={textColor}
+                mainBorder={mainBorder}
+                containerBg={containerBg}
+              />
+            </MDBCol>
+            <MDBCol md="5">
+              <LocationSearchInput
+                value={toSearch}
+                onChange={(e) => setToSearch(e.target.value)}
+                placeholder="To (e.g., Alabang)"
+                locations={muntinlupaLocations()}
+                onSelect={(location) =>
+                  handleLocationSelect(
+                    location,
+                    setToSearch,
+                    setToCoords,
+                    "to_location"
+                  )
+                }
+                isDark={isDark}
+                textColor={textColor}
+                mainBorder={mainBorder}
+                containerBg={containerBg}
+              />
+            </MDBCol>
+            <MDBCol md="2" className="text-center">
+              <button
+                className="btn btn-sm"
+                style={{
+                  backgroundColor: containerBg,
+                  color: textColor,
+                  border: `1px solid ${mainBorder}`,
+                }}
+                onClick={() => setSelectedToda(null)}
+              >
+                Change TODA
+              </button>
+            </MDBCol>
+          </>
       )}
         </MDBRow>
       </div>
