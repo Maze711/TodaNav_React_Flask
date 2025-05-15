@@ -17,6 +17,7 @@ import {
   calculateDistance,
   calculateFare,
   LocationContext,
+  LocationProvider,
   todaLocations,
   findNearbyTODA,
 } from "../../contexts/LocationContext.jsx";
@@ -24,11 +25,19 @@ import {
 const socket = io("http://127.0.0.1:5000");
 
 export const BookingDetail = () => {
+  return (
+    <LocationProvider>
+      <BookingDetailInner />
+    </LocationProvider>
+  );
+};
+
+const BookingDetailInner = () => {
   const { isDark } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(LocationContext);
+  const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(LocationContext);
 
   // New state to keep search input open
   const keepSearchOpen = location.state?.keepSearchOpen || false;
@@ -45,13 +54,18 @@ const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(Locat
     return params.get(param) || "";
   };
 
+  // New const for default from location using defaultLocation from context
+  // If fromSearch is empty, use defaultLocation label as initial value
+  const defaultFromLocationLabel = "Bayanan"; // Updated to match the defaultLocation name in muntinlupaLocations
+  const initialFromSearch = getQueryParam("from") || defaultFromLocationLabel;
+
   const [todaSearch, setTodaSearch] = useState("");
   const [selectedToda, setSelectedToda] = useState(null);
   const [hideTripDetailsContainer, setHideTripDetailsContainer] = useState(false);
   const [hideRiderInfoContainer, setHideRiderInfoContainer] = useState(false);
-  const [fromSearch, setFromSearch] = useState(getQueryParam("from"));
+  const [fromSearch, setFromSearch] = useState(initialFromSearch);
   const [toSearch, setToSearch] = useState(getQueryParam("to") || "");
-  const [mapCenter, setMapCenter] = useState([14.4167, 121.0333]);
+  const [mapCenter, setMapCenter] = useState(defaultLocation);
   const [fromCoords, setFromCoords] = useState(null);
   const [toCoords, setToCoords] = useState(null);
   const [distance, setDistance] = useState(null);
@@ -165,9 +179,13 @@ const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(Locat
       for (const category of Object.values(muntinlupaLocations())) {
         if (category[fromSearch]) {
           setFromCoords(category[fromSearch]);
+          setMapCenter(category[fromSearch]);
           break;
         }
       }
+    } else {
+      setFromCoords(defaultLocation);
+      setMapCenter(defaultLocation);
     }
     if (toSearch) {
       for (const category of Object.values(muntinlupaLocations())) {
