@@ -141,9 +141,11 @@ export const findNearbyTODA = (userLat, userLon, radiusKm = 10) => {
 
 export const LocationContext = createContext();
 
+const defaultLocation = [14.410154, 121.047960];
+
 export const LocationProvider = ({ children }) => {
   const { user } = useContext(UserContext);
-  const [userLocation, setUserLocation] = useState(null); // Initialize as null
+  const [userLocation, setUserLocation] = useState(defaultLocation); // Initialize with defaultLocation
 
   const updateUserLocation = (newLocation) => {
     setUserLocation(newLocation);
@@ -152,6 +154,7 @@ export const LocationProvider = ({ children }) => {
   const fetchUserLocation = () => {
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported by this browser.");
+      setUserLocation(defaultLocation);
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -162,6 +165,7 @@ export const LocationProvider = ({ children }) => {
       },
       (error) => {
         console.error("Error getting location:", error.message);
+        setUserLocation(defaultLocation);
       },
       { enableHighAccuracy: true }
     );
@@ -175,7 +179,7 @@ export const LocationProvider = ({ children }) => {
 
   return (
     <LocationContext.Provider
-      value={{ userLocation, updateUserLocation, findNearbyTODA, fetchUserLocation }}
+      value={{ userLocation, updateUserLocation, findNearbyTODA, fetchUserLocation, defaultLocation }}
     >
       {children}
     </LocationContext.Provider>
