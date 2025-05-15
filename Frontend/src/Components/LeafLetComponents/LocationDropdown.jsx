@@ -8,7 +8,7 @@ export const LocationDropdown = ({
   mainBorder,
   containerBg,
 }) => {
-  const categoryOrder = ["landmarks", "buildings", "barangays", "schools"];
+  const categoryOrder = ["TODA Locations", "landmarks", "buildings", "barangays", "schools"];
 
   return (
     <div

@@ -37,7 +37,7 @@ const BookingDetailInner = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const { /* userLocation, */ findNearbyTODA, defaultLocation } = useContext(LocationContext);
+  const { userLocation, findNearbyTODA, defaultLocation } = useContext(LocationContext);
 
   // New state to keep search input open
   const keepSearchOpen = location.state?.keepSearchOpen || false;
@@ -64,7 +64,7 @@ const BookingDetailInner = () => {
   const [hideTripDetailsContainer, setHideTripDetailsContainer] = useState(false);
   const [hideRiderInfoContainer, setHideRiderInfoContainer] = useState(false);
   const [fromSearch, setFromSearch] = useState(initialFromSearch);
-  const [fromDisplayLabel, setFromDisplayLabel] = useState("Current Location");
+  const [fromDisplayLabel, setFromDisplayLabel] = useState(defaultFromLocationLabel);
   const [toSearch, setToSearch] = useState(getQueryParam("to") || "");
   const [mapCenter, setMapCenter] = useState(defaultLocation);
   const [fromCoords, setFromCoords] = useState(null);
@@ -373,7 +373,7 @@ const BookingDetailInner = () => {
         toSearch={toSearch}
         isDark={isDark}
         todaMarkers={selectedToda ? [selectedToda] : []}
-        // userLocation={showUserLocationMarker ? userLocation : null} // Pass userLocation to MapView or null to hide
+        defaultFromLocationLabel={defaultFromLocationLabel}
       />
       </div>
 
@@ -567,20 +567,20 @@ const BookingDetailInner = () => {
               Coordinates: {selectedToda.coordinates[0].toFixed(6)}°,{" "}
               {selectedToda.coordinates[1].toFixed(6)}°
             </p>
-            {/* {userLocation && (
+            {fromCoords && (
               <p style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
                 Distance:{" "}
                 {Math.round(
                   calculateDistance(
-                    userLocation[0],
-                    userLocation[1],
+                    fromCoords[0],
+                    fromCoords[1],
                     selectedToda.coordinates[0],
                     selectedToda.coordinates[1]
                   ) * 1000
                 )}{" "}
                 meters
               </p>
-            )} */}
+            )}
           </div>
         )}
 

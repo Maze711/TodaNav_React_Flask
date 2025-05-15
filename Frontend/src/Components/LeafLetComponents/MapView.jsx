@@ -20,6 +20,7 @@ export const MapView = ({
   routeProfile = "driving", // You can set this prop to "walking", "cycling", or "driving"
   todaMarkers = [], // New prop for TODA markers
   userLocation, // New prop for user's exact location
+  defaultFromLocationLabel, // New prop for default from location label
 }) => {
   const [routeCoords, setRouteCoords] = useState([]);
 
@@ -60,22 +61,42 @@ export const MapView = ({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
       {fromCoords && (
-        <Marker position={fromCoords}>
-          <Popup>
-            Pickup: {fromSearch}
-            <br />
-            Lat: {fromCoords[0]}, Lng: {fromCoords[1]}
-          </Popup>
-        </Marker>
+        <>
+          {fromSearch === defaultFromLocationLabel ? (
+            <CircleMarker
+              center={fromCoords}
+              radius={10}
+              pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.5 }}
+            >
+              <Popup>
+                {defaultFromLocationLabel || "Your Location"}
+                <br />
+                Lat: {fromCoords[0]}, Lng: {fromCoords[1]}
+              </Popup>
+            </CircleMarker>
+          ) : (
+            <Marker position={fromCoords}>
+              <Popup>
+                Pickup: {fromSearch}
+                <br />
+                Lat: {fromCoords[0]}, Lng: {fromCoords[1]}
+              </Popup>
+            </Marker>
+          )}
+        </>
       )}
       {toCoords && (
-        <Marker position={toCoords}>
+        <CircleMarker
+          center={toCoords}
+          radius={10}
+          pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.5 }}
+        >
           <Popup>
             Dropoff: {toSearch}
             <br />
             Lat: {toCoords[0]}, Lng: {toCoords[1]}
           </Popup>
-        </Marker>
+        </CircleMarker>
       )}
       {todaMarkers.map((toda, index) => (
         <Marker key={index} position={toda.coordinates}>
@@ -88,7 +109,12 @@ export const MapView = ({
           </Popup>
         </Marker>
       ))}
-      {userLocation && (
+      {!(
+        userLocation &&
+        fromCoords &&
+        userLocation[0] === fromCoords[0] &&
+        userLocation[1] === fromCoords[1]
+      ) && userLocation && (
         <CircleMarker
           center={userLocation}
           radius={10}
