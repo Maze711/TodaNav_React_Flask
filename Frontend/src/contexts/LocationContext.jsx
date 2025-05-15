@@ -3,18 +3,19 @@ import { UserContext } from "../App";
 
 export const muntinlupaLocations = () => ({
   barangays: {
-    "Alabang": [14.418364, 121.0385],
+    Alabang: [14.418364, 121.0385],
     "Ayala Alabang": [14.406064, 121.022355],
-    "Bayanan": [14.407797, 121.049972],
-    "Buli": [14.443, 121.0505],
-    "Cupang": [14.4315, 121.04861],
+    Bayanan: [14.407797, 121.049972],
+    Buli: [14.443, 121.0505],
+    Cupang: [14.4315, 121.04861],
     "New Alabang Village": [14.4175, 121.0275],
-    "Poblacion": [14.385411, 121.029033],
-    "Putatan": [14.398367, 121.036378],
-    "Sucat": [14.4365, 121.0503],
-    "Tunasan": [14.372544, 121.036378],
+    Poblacion: [14.385411, 121.029033],
+    Putatan: [14.398367, 121.036378],
+    Sucat: [14.4365, 121.0503],
+    Tunasan: [14.372544, 121.036378],
   },
   landmarks: {
+    "711, Ilaya Alabang": [14.410154, 121.047960],
     "Alabang Town Center": [14.423477, 121.029795],
     "Festival Malls": [14.4157, 121.038902],
     "St. Jerome Parish Church": [14.421944, 121.031389],
@@ -116,7 +117,8 @@ export const todaLocations = [
   },
   {
     name: "ABCMSTODA (Alabang-Bayanan-Cupang-Market Site Tricycle Operators and Drivers Association)",
-    location: "Primarily operates in Barangays Alabang, Bayanan, and Cupang, Muntinlupa City",
+    location:
+      "Primarily operates in Barangays Alabang, Bayanan, and Cupang, Muntinlupa City",
     coordinates: [14.418364, 121.0385],
   },
 ];
@@ -141,7 +143,7 @@ export const findNearbyTODA = (userLat, userLon, radiusKm = 10) => {
 
 export const LocationContext = createContext();
 
-const defaultLocation = [14.410154, 121.047960];
+const defaultLocation = [14.410154, 121.04796];
 
 export const LocationProvider = ({ children }) => {
   const { user } = useContext(UserContext);
@@ -179,7 +181,13 @@ export const LocationProvider = ({ children }) => {
 
   return (
     <LocationContext.Provider
-      value={{ userLocation, updateUserLocation, findNearbyTODA, fetchUserLocation, defaultLocation }}
+      value={{
+        userLocation,
+        updateUserLocation,
+        findNearbyTODA,
+        fetchUserLocation,
+        defaultLocation,
+      }}
     >
       {children}
     </LocationContext.Provider>
