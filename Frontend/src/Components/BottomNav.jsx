@@ -25,7 +25,7 @@ export const BottomNav = () => {
   const { isDark } = useTheme();
   const { unread, clearUnread } = useContext(NotificationContext);
   const location = useLocation();
-  const { fetchUserLocation } = useContext(LocationContext);
+  const { fetchUserLocation, updateUserLocation, defaultLocation } = useContext(LocationContext);
 
   React.useEffect(() => {
     if (location.pathname === "/Notif") clearUnread();
@@ -42,7 +42,8 @@ export const BottomNav = () => {
   const textStyle = { color: isDark ? "black" : "inherit" };
 
   const handleLocateClick = () => {
-    fetchUserLocation();
+    // Use defaultLocation when Locate is clicked
+    updateUserLocation(defaultLocation);
   };
 
   return (
